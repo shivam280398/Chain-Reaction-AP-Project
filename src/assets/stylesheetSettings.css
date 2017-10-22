@@ -1,0 +1,122 @@
+.background {
+    -fx-background-color: #1d1d1d;
+}
+
+#SettingsLabel {
+	-fx-font-size: 50px;
+    -fx-font-weight: bold;
+    -fx-text-fill:white;
+    -fx-padding: 40 22 5 22;
+    -fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
+}
+
+.border-pane, .background{
+	-fx-background-color: #1d1d1d;
+}
+
+#settings{
+	-fx-background-color: #1d1d1d;
+}
+.list-view{
+	-fx-background-color: #1d1d1d;
+	
+}
+
+.list-cell{
+	-fx-padding: 5 22 5 22;
+    -fx-text-fill: white;
+     -fx-background-color: 
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-border-color:#1d1d1d;
+    -fx-border-width: 2;
+}
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);
+    -fx-text-fill: white;
+    
+}
+
+
+
+.list-cell:even { 
+    
+}
+
+
+.list-cell:filled:hover {
+    -fx-background-color: #0093ff;
+    -fx-text-fill: white;
+}
+
+.color-picker {
+-fx-background-color: white; 
+-fx-background-radius: 0; 
+-fx-padding: 0;
+-fx-background-insets: 0, 0;
+}
+
+ 
+ .color-picker .color-picker-label .text {
+visibility: true;
+
+}
+
+.color-picker .color-picker-label{
+ -fx-font-size: 20px;
+ -fx-font-weight: bold;
+ -fx-text-fill: black;
+ -fx-spacing: 0;
+ -fx-padding: 0;
+ -fx-border-width: 0;
+ -fx-background-insets: 0, 0;
+ -fx-border-radius: 1;
+}
+
+.button {
+    -fx-padding: 5 22 5 22;   
+    -fx-border-color: #e2e2e2;
+    -fx-border-width: 2;
+    -fx-background-radius: 0;
+    -fx-background-color: #1d1d1d;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 11pt;
+    -fx-text-fill: #d8d8d8;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
+
+.button:hover {
+    -fx-background-color: #3a3a3a;
+}
+
+.button:pressed, .button:default:hover:pressed {
+  -fx-background-color: white;
+  -fx-text-fill: #1d1d1d;
+}
+
+.button:focused {
+    -fx-border-color: white, white;
+    -fx-border-width: 1, 1;
+    -fx-border-style: solid, segments(1, 1);
+    -fx-border-radius: 0, 0;
+    -fx-border-insets: 1 1 1 1, 0;
+}
+
+.button:disabled, .button:default:disabled {
+    -fx-opacity: 0.4;
+    -fx-background-color: #1d1d1d;
+    -fx-text-fill: white;
+}
+
+.button:default {
+    -fx-background-color: -fx-focus-color;
+    -fx-text-fill: #ffffff;
+}
+
+.button:default:hover {
+    -fx-background-color: derive(-fx-focus-color,30%);
+}
