@@ -24,40 +24,39 @@ public class GameGUI extends Application {
 
 	@Override
 	public void start(Stage mainStage) throws Exception {
+		
 		Scanner s = new Scanner(System.in);
-		System.out.println("Enter Dimensions");
-		int m = s.nextInt();
-		int n = s.nextInt();
+		int m, n = 0;
+		System.out.println("Enter Dimension Option:");
+		System.out.println("1. 9X6");
+		System.out.println("2. 15X10");
+		int option = s.nextInt();
+		if (option == 1) {
+			m = 6;
+			n = 9;
+		} else {
+			m = 10;
+			n = 15;
+		}
 		mainStage.setTitle("Chain Reaction");
 		HBox hbox = new HBox(5);
-		Button undoBtn = new Button("Undo");
-		ObservableList<String> dropdown = FXCollections.observableArrayList("Start Again","Exit");
+		Button undoBtn = new Button("UNDO");
+		ObservableList<String> dropdown = FXCollections.observableArrayList("Start Again", "Exit");
 		final ComboBox dropdownMenu = new ComboBox(dropdown);
-		
+		undoBtn.setId("Undo");
 		hbox.getChildren().addAll(undoBtn, dropdownMenu);
-		hbox.setPadding(new Insets(10, 10, 5, 50));
+		if (option == 1)
+			hbox.setPadding(new Insets(10, 0, 5, 150));
+		else
+			hbox.setPadding(new Insets(10, 0, 5, 220));
 		BorderPane root = new BorderPane();
 		Scene mainScene = new Scene(root);
-	//	root.setPrefSize(500, 500);
 		mainStage.setScene(mainScene);
 		mainScene.getStylesheets().add(getClass().getResource("/assets/stylesheetGame.css").toExternalForm());
 		grid = new Grid(m, n);
 		root.setTop(hbox);
 		root.setCenter(grid);
 		mainStage.show();
-	}
-	public VBox add() {
-		VBox vb = new VBox();
-		vb.setPadding(new Insets(50, 70, 50, 70));
-		vb.setSpacing(50);
-		vb.setStyle("-fx-background-color: #28cc28;");
-		Button b1 = new Button("Undo");
-		b1.setMinSize(150, 40);
-		Button b2 = new Button("Exit");
-		b2.setMinSize(150, 40);
-		vb.getChildren().addAll(b1, b2);
-		return vb;
-		
 	}
 
 }

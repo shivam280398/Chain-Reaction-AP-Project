@@ -1,12 +1,16 @@
 package Game;
 
+import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.util.Duration;
 
@@ -15,6 +19,7 @@ public class Grid extends GridPane {
 	private int height;
 	private int width;
 	private DropShadow shadow = new DropShadow();
+	private int param = 0;
 
 	public Grid(int x, int y) {
 		super();
@@ -27,12 +32,14 @@ public class Grid extends GridPane {
 				int temp2 = j;
 				grid[i][j] = new Cell(i, j);
 				grid[i][j].setEffect(shadow);
-				if(x == 6 && x == 9)
-				{grid[i][j].setMinSize(100, 100);
-				grid[i][j].setMaxSize(100, 100);}
-				else 
-					grid[i][j].setMinSize(20, 20);
-				//grid[i][j].setMaxSize(50, 50);
+				if (x == 10 && y == 15) {
+					grid[i][j].setMinSize(45, 45);
+					grid[i][j].setMaxSize(45, 45);
+
+				} else {
+					grid[i][j].setMinSize(60, 60);
+					grid[i][j].setMaxSize(60, 60);
+				}
 				if ((i == 0 && (j == 0 || j == (y - 1))) || (i == (x - 1) && (j == 0 || j == (y - 1)))) {
 					grid[i][j].setOnAction(e -> OrbsEvent1(temp1, temp2));
 				} else if ((i == 0 || i == (x - 1)) || (j == 0 || j == (y - 1))) {
@@ -73,25 +80,22 @@ public class Grid extends GridPane {
 		grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
 		if (grid[x][y].getOrbs() == 1) {
 			Sphere s = new Sphere();
-			s.setRadius(2.0);
+			s.setRadius(12.0);
 			s.setTranslateX(0);
 			s.setTranslateY(0);
 			s.setStyle("-fx-background-color: #28cc28;");
-			// String s="assets/sphere.png";
-			// Image image=new Image(getClass().getResourceAsStream("sphere.png"));
-			// Image image =new Image(s);
-			// ImageView imageView=new ImageView();
-			// imageView.setImage(image);
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(Color.RED);
+			s.setMaterial(pm);
 			RotateTransition rotateTransition = new RotateTransition();
 			rotateTransition.setDuration(Duration.millis(1000));
 			rotateTransition.setNode(s);
 			rotateTransition.setByAngle(360);
-			rotateTransition.setCycleCount(50);
+			rotateTransition.setCycleCount(Timeline.INDEFINITE);
 			rotateTransition.setAutoReverse(false);
 			rotateTransition.play();
 			this.grid[x][y].setGraphic(s);
 		} else {
-			System.out.println("Split");
 			this.grid[x][y].setGraphic(null);
 			grid[x][y].setOrbs(0);
 		}
@@ -101,25 +105,39 @@ public class Grid extends GridPane {
 		grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
 		if (grid[x][y].getOrbs() == 1) {
 			Sphere s = new Sphere();
-			s.setRadius(1.0);
+			s.setRadius(12.0);
 			s.setTranslateX(0);
 			s.setTranslateY(0);
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(Color.RED);
+			s.setMaterial(pm);
 			this.grid[x][y].setGraphic(s);
 		} else if (grid[x][y].getOrbs() == 2) {
 			Group g = new Group();
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(Color.RED);
 			Sphere s = new Sphere();
-			s.setRadius(20.0);
+			s.setRadius(12.0);
 			s.setTranslateX(0);
 			s.setTranslateY(-4);
 			Sphere t = new Sphere();
-			t.setRadius(20.0);
+			t.setRadius(12.0);
 			t.setTranslateX(0);
 			t.setTranslateY(8);
 			g.getChildren().add(s);
 			g.getChildren().add(t);
+			s.setMaterial(pm);
+			t.setMaterial(pm);
+			RotateTransition rotateTransition = new RotateTransition();
+			rotateTransition.setDuration(Duration.millis(1000));
+			rotateTransition.setNode(g);
+			rotateTransition.setByAngle(360);
+			rotateTransition.setCycleCount(Timeline.INDEFINITE);
+			rotateTransition.setAutoReverse(false);
+			rotateTransition.setInterpolator(Interpolator.LINEAR);
+			rotateTransition.play();
 			this.grid[x][y].setGraphic(g);
 		} else {
-			System.out.println("Split");
 			this.grid[x][y].setGraphic(null);
 			grid[x][y].setOrbs(0);
 		}
@@ -129,43 +147,70 @@ public class Grid extends GridPane {
 		grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
 		if (grid[x][y].getOrbs() == 1) {
 			Sphere s = new Sphere();
-			s.setRadius(5.0);
+			s.setRadius(12.0);
 			s.setTranslateX(0);
 			s.setTranslateY(0);
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(Color.RED);
+			s.setMaterial(pm);
 			this.grid[x][y].setGraphic(s);
 		} else if (grid[x][y].getOrbs() == 2) {
 			Group g = new Group();
 			Sphere s = new Sphere();
-			s.setRadius(20.0);
+			s.setRadius(12.0);
 			s.setTranslateX(0);
 			s.setTranslateY(-4);
 			Sphere t = new Sphere();
-			t.setRadius(20.0);
+			t.setRadius(12.0);
 			t.setTranslateX(0);
 			t.setTranslateY(8);
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(Color.RED);
+			s.setMaterial(pm);
+			t.setMaterial(pm);
 			g.getChildren().add(s);
 			g.getChildren().add(t);
+			RotateTransition rotateTransition = new RotateTransition();
+			rotateTransition.setDuration(Duration.millis(1000));
+			rotateTransition.setNode(g);
+			rotateTransition.setByAngle(360);
+			rotateTransition.setCycleCount(Timeline.INDEFINITE);
+			rotateTransition.setAutoReverse(false);
+			rotateTransition.setInterpolator(Interpolator.LINEAR);
+			rotateTransition.play();
 			this.grid[x][y].setGraphic(g);
 		} else if (grid[x][y].getOrbs() == 3) {
 			Group g = new Group();
 			Sphere s = new Sphere();
-			s.setRadius(20.0);
+			s.setRadius(13.0);
 			s.setTranslateX(-8);
 			s.setTranslateY(-4);
 			Sphere t = new Sphere();
-			t.setRadius(20.0);
+			t.setRadius(13.0);
 			t.setTranslateX(-8);
-			t.setTranslateY(15);
+			t.setTranslateY(12);
 			Sphere z = new Sphere();
-			z.setRadius(20.0);
-			z.setTranslateX(16);
+			z.setRadius(13.0);
+			z.setTranslateX(12);
 			z.setTranslateY(4);
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(Color.RED);
+			s.setMaterial(pm);
+			t.setMaterial(pm);
+			z.setMaterial(pm);
 			g.getChildren().add(s);
 			g.getChildren().add(z);
 			g.getChildren().add(t);
+			RotateTransition rotateTransition = new RotateTransition();
+			rotateTransition.setInterpolator(Interpolator.LINEAR);
+			rotateTransition.setDuration(Duration.millis(2000));
+			rotateTransition.setNode(g);
+			rotateTransition.setByAngle(360);
+			rotateTransition.setCycleCount(Timeline.INDEFINITE);
+			rotateTransition.setAutoReverse(false);
+			rotateTransition.play();
 			this.grid[x][y].setGraphic(g);
 		} else {
-			System.out.println("Split");
 			this.grid[x][y].setGraphic(null);
 			grid[x][y].setOrbs(0);
 		}

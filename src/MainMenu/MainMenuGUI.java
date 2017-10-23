@@ -52,25 +52,21 @@ public class MainMenuGUI extends Application {
 		Button resumeBtn = new Button("RESUME");
 		Text noOfPlayers = new Text("No Of Players");
 		noOfPlayers.setId("noOfP");
-		//noOfPlayers.text
+		// noOfPlayers.text
 		noOfPlayers.setFill(Color.WHITE);
 		TextField noOfPlayerstf = new TextField();
 		noOfPlayerstf.setMaxWidth(30);
 		Text gridSizet = new Text("          Grid Size");
 		gridSizet.setFill(Color.WHITE);
-		ObservableList<String> gridSize = FXCollections.observableArrayList("9X6","15X10");
+		ObservableList<String> gridSize = FXCollections.observableArrayList("9X6", "15X10");
 		final ComboBox gridSizeBox = new ComboBox(gridSize);
 		playGameBtn.setMinWidth(120);
 		settingsBtn.setMinWidth(120);
 		quitBtn.setMinWidth(120);
 		resumeBtn.setMinWidth(120);
-		hbox.getChildren().addAll(noOfPlayers,noOfPlayerstf,gridSizet,gridSizeBox);
+		hbox.getChildren().addAll(noOfPlayers, noOfPlayerstf, gridSizet, gridSizeBox);
 		flow.getChildren().addAll(playGameBtn, settingsBtn, quitBtn, resumeBtn);
-		//root.setCenter();
-		subroot.getChildren().addAll(hbox,flow);
-		//AnchorPane.setBottomAnchor(flow, 10d);
-		//AnchorPane.setTopAnchor(hbox, 2d);
-		
+		subroot.getChildren().addAll(hbox, flow);
 		root.setCenter(subroot);
 
 		stage.setScene(mainScene);

@@ -1,10 +1,14 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 .background {
     -fx-background-color: #1d1d1d;
 }
 
 .label {
 	-fx-text-fill: #ffffff;
+}
+
+#BorderPane {
+	-fx-background-color: #1d1d1d;
+	-fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );
 }
 
 .button {
@@ -15,7 +19,7 @@
     -fx-background-color: #1d1d1d;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
-    -fx-text-fill: #d8d8d8;
+    -fx-text-fill: white;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
@@ -49,4 +53,85 @@
 
 .button:default:hover {
     -fx-background-color: derive(-fx-focus-color,30%);
+}
+
+.combo-box{
+	 -fx-background-color: #1d1d1d;
+    -fx-text-fill: white ;
+     -fx-background-radius: 5,4,3,5;
+}
+
+
+.combo-box .combo-box-popup .list-view, .combo-box .combo-box-popup .list-cell {
+    -fx-background-color: black ;
+    -fx-text-fill: yellow ;
+    -fx-font-family: "Calibri" ;
+}
+.combo-box .combo-box-popup .list-cell:hover {
+    -fx-text-fill: yellow ;
+    -fx-background-color: green ;
+}
+.combo-box .cell{
+    -fx-text-fill: white;
+    -fx-font: 12px "Arial";
+}
+#Undo{
+	-fx-background-color: 
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-family: "Arial";
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font-size: 12px;
+}
+
+#Undo Text{
+-fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.9) , 1, 0.0 , 0 , 1 );
+
+}
+
+
+#Undo:hover {
+	
+    -fx-background-color: #3a3a3a
+     radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+
+#Undo:pressed, #Undo:default:hover:pressed {
+  -fx-background-color: white
+  radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+  -fx-text-fill: #1d1d1d;
+}
+
+#Undo:focused {
+    -fx-border-color: white, white
+    radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-border-width: 1, 1;
+    -fx-border-style: solid, segments(1, 1);
+    -fx-background-radius: 5,4,3,5;
+    -fx-border-insets: 1 1 1 1, 0;
+}
+
+#Undo:disabled, #Undo:default:disabled {
+    -fx-opacity: 0.4;
+    -fx-background-color: #1d1d1d;
+    -fx-text-fill: white;
+}
+
+#Undo:default {
+    -fx-background-color: -fx-focus-color
+    radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-text-fill: #ffffff;
+}
+
+#Undo:default:hover {
+    -fx-background-color: derive(-fx-focus-color,30%)
+    radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-text-fill: #ffffff;
 }
