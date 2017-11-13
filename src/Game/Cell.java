@@ -1,13 +1,25 @@
 package Game;
 
+import java.io.Serializable;
+
+import Settings.Player;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 
-public class Cell extends Button {
+public class Cell extends Button{
 	private int x;
 	private int y;
 	private int criticalMass;
 	private int orbs;
+	private Player p;
+
+	public Player getP() {
+		return p;
+	}
+
+	public void setP(Player p) {
+		this.p = p;
+	}
 
 	public Cell(int x1, int y1) {
 		super();

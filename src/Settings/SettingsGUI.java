@@ -1,5 +1,6 @@
 package Settings;
 
+import MainMenu.MainMenuGUI;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,7 +29,19 @@ import javafx.stage.Stage;
 
 public class SettingsGUI extends Application {
 
-	Settings setting = new Settings();
+	public int noOfplayers;
+	public Settings setting;
+	public MainMenuGUI mainMenu;
+	
+	public SettingsGUI(String _noOfPlayers,MainMenuGUI _mainMenu){
+		int nPlayers=Integer.parseInt(_noOfPlayers);
+		this.noOfplayers = nPlayers;
+		setting = new Settings(noOfplayers);
+		mainMenu = _mainMenu;
+		//System.out.println(mainMenu.sett.noOfplayers);
+	}
+	
+	 
 
 	@Override
 	public void start(Stage mainStage) throws Exception {
@@ -52,6 +65,7 @@ public class SettingsGUI extends Application {
 		Label label1 = new Label("Settings");
 		root.setTop(label1);
 		label1.setId("SettingsLabel");
+		
 		ObservableList<String> labels = FXCollections.observableArrayList("Player1", "Player2", "Player3", "Player4",
 				"Player5", "Player6", "Player7", "Player8");
 		ListView<String> settingsListView = new ListView<String>(labels);
@@ -63,15 +77,24 @@ public class SettingsGUI extends Application {
 	    VBox box = new VBox(5, settingsListView);
 		box.setPadding(new Insets(10, 20, 20, 10));
 		box.setMaxHeight(280);
+		
+		mainmenuBtn.setOnMouseClicked(event -> {
+			try {
+				mainMenu.start( new Stage());
+				mainStage.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 		settingsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				System.out.println("clicked on " + settingsListView.getSelectionModel().getSelectedItem());
 				int index = settingsListView.getSelectionModel().getSelectedIndex();
-				// System.out.println(s);
-
+				if(index<noOfplayers){
 				colorPicker(setting.players[index], mainStage);
+			    }
 			}
 		});
 		root.setCenter(box);
@@ -102,7 +125,6 @@ public class SettingsGUI extends Application {
 			public void handle(ActionEvent t) {
 				Color colorID = colorPicker.getValue();
 				circle.setFill(colorPicker.getValue());
-				System.out.println(colorID);
 			}
 		});
 
@@ -118,7 +140,11 @@ public class SettingsGUI extends Application {
 
 				Color colorID = colorPicker.getValue();
 				System.out.println(colorID);
+				String obcolor = String.valueOf(colorID);
+				System.out.println(obcolor);
+				System.out.println(Color.valueOf(obcolor));
 				boolean colorValid = setting.isColorValid(colorID);
+				
 				if (colorValid == true) {
 					player.setColor(colorID);
 				} else {
