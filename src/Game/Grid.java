@@ -6,6 +6,7 @@ import java.io.IOException;
 import MainMenu.MainMenuGUI;
 import Settings.Player;
 import Status.CellStatus;
+import Status.GameGUIStatus;
 import Status.GridStatus;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -35,14 +36,15 @@ class invalid extends Exception {
 
 public class Grid extends GridPane {
 	public Cell[][] grid;
-	public GridStatus gridst;
-	public GridStatus gridundo;
+	public GameGUIStatus gridst;
+	public GameGUIStatus gridundo;
 	private int height;
 	private int width;
 	private DropShadow shadow = new DropShadow();
-	private int param = 0;
+	public boolean winner = false;
 	private boolean round = false;
 	int counter;
+	public GameGUIStatus gsundo = null;
 
 	public Grid(int x, int y, Player[] players, int count) {
 		super();
@@ -50,8 +52,8 @@ public class Grid extends GridPane {
 		this.height = y;
 		this.width = x;
 		grid = new Cell[x][y];
-		gridst = new GridStatus(x, y, counter);
-		gridundo = new GridStatus(x, y, counter);
+		gridst = new GameGUIStatus(players.length, players, y + "X" + x, new GridStatus(x, y, counter));
+		gridundo = new GameGUIStatus(players.length, players, y + "X" + x, new GridStatus(x, y, counter));
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
 				int temp1 = i;
@@ -88,17 +90,20 @@ public class Grid extends GridPane {
 		this.width = _grid.height;
 		int y = height;
 		int x = width;
+		_grid.print();
 		counter = _grid.count;
 		System.out.println(counter);
 		grid = new Cell[width][height];
 		System.out.println(height + " " + width);
-		gridst = _grid;
-		saveState();
+		gridst = new GameGUIStatus(players.length, players, y + "X" + x, _grid);
+		gridundo = new GameGUIStatus(players.length, players, y + "X" + x, new GridStatus(x, y, counter));
+		// saveState(1);
+
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				int temp1 = i;
 				int temp2 = j;
-				System.out.println(i +  "  " + j);
+				System.out.println(i + "  " + j);
 				grid[i][j] = new Cell(i, j);
 				grid[i][j].setEffect(shadow);
 				if (width == 10 && height == 15) {
@@ -109,30 +114,28 @@ public class Grid extends GridPane {
 					grid[i][j].setMinSize(60, 60);
 					grid[i][j].setMaxSize(60, 60);
 				}
-				if(_grid.gridSt[i][j].noOfOrbs == 1){
+				if (_grid.gridSt[i][j].noOfOrbs == 1) {
 					grid[i][j].setOrbs(1);
-					
+
 					System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
-					animation1(i,j,null,_grid.gridSt[i][j].currentOwner);
+					animation1(i, j, null, _grid.gridSt[i][j].currentOwner);
 				}
-				
-				else if(_grid.gridSt[i][j].noOfOrbs == 2){
+
+				else if (_grid.gridSt[i][j].noOfOrbs == 2) {
 					grid[i][j].setOrbs(2);
 					System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
-					
+
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
-					animation2(i,j,null,_grid.gridSt[i][j].currentOwner);
-				}
-				else if(_grid.gridSt[i][j].noOfOrbs == 3)
-				{
+					animation2(i, j, null, _grid.gridSt[i][j].currentOwner);
+				} else if (_grid.gridSt[i][j].noOfOrbs == 3) {
 					grid[i][j].setOrbs(3);
 					System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
-					
+
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
-					animation3(i,j,null,_grid.gridSt[i][j].currentOwner);
+					animation3(i, j, null, _grid.gridSt[i][j].currentOwner);
 				}
-				
+
 				if ((i == 0 && (j == 0 || j == (y - 1))) || (i == (x - 1) && (j == 0 || j == (y - 1)))) {
 					grid[i][j].setOnAction(e -> OrbsEvent1(temp1, temp2, players));
 					grid[i][j].setCriticalMass(1);
@@ -142,16 +145,12 @@ public class Grid extends GridPane {
 				} else {
 					grid[i][j].setOnAction(e -> OrbsEvent3(temp1, temp2, players));
 					grid[i][j].setCriticalMass(3);
-					System.out.println("lok");
 				}
-				
-				
+
 				this.add(grid[i][j], i, j);
 			}
 		}
 	}
-
-	
 
 	public Cell[][] getGrid() {
 		return grid;
@@ -187,15 +186,15 @@ public class Grid extends GridPane {
 			}
 		}
 		if (grid[x][y].getOrbs() == 0) {
-			animation1(x, y, players,null);
+			animation1(x, y, players, null);
+			saveState(1);
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
 			checkCounter(players);
 			grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-			saveState();
-			gridst.setnumber(x, y,grid[x][y].getOrbs());
-			gridst.setowner(x, y,grid[x][y].getP());
-			
+			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+			gridst.grid.setowner(x, y, grid[x][y].getP());
+
 		} else {
 			boolean checkFlag = false;
 			try {
@@ -205,6 +204,7 @@ public class Grid extends GridPane {
 				counter--;
 			}
 			if (checkFlag == false) {
+				saveState(1);
 				recursion(x, y, players);
 			}
 		}
@@ -220,14 +220,15 @@ public class Grid extends GridPane {
 			}
 		}
 		if (grid[x][y].getOrbs() == 0) {
-			animation1(x, y, players,null);
+			animation1(x, y, players, null);
+			saveState(1);
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
 			checkCounter(players);
 			grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-			saveState();
-			gridst.setnumber(x, y,grid[x][y].getOrbs());
-			gridst.setowner(x, y,grid[x][y].getP());
+
+			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+			gridst.grid.setowner(x, y, grid[x][y].getP());
 		} else if (grid[x][y].getOrbs() == 1) {
 			boolean checkFlag = false;
 			try {
@@ -237,12 +238,13 @@ public class Grid extends GridPane {
 				counter--;
 			}
 			if (checkFlag == false) {
+				saveState(1);
 				grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-				animation2(x, y, players,null);
+				animation2(x, y, players, null);
 				this.grid[x][y].setP(players[counter - 1]);
-				saveState();
-				gridst.setnumber(x, y,grid[x][y].getOrbs());
-				gridst.setowner(x, y,grid[x][y].getP());
+
+				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+				gridst.grid.setowner(x, y, grid[x][y].getP());
 				checkCounter(players);
 			}
 		} else {
@@ -254,6 +256,7 @@ public class Grid extends GridPane {
 				counter--;
 			}
 			if (checkFlag == false) {
+				saveState(1);
 				recursion(x, y, players);
 			}
 		}
@@ -261,7 +264,7 @@ public class Grid extends GridPane {
 
 	public void OrbsEvent3(int x, int y, Player[] players) {
 		counter++;
-		System.out.println(counter-1);
+		System.out.println(counter - 1);
 		checkCounter(players);
 		if (players[counter - 1] == null) {
 			while (players[counter - 1] == null) {
@@ -270,14 +273,16 @@ public class Grid extends GridPane {
 			}
 		}
 		if (grid[x][y].getOrbs() == 0) {
-			animation1(x, y, players,null);
+			animation1(x, y, players, null);
+			saveState(1);
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
 			checkCounter(players);
 			this.grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-			saveState();
-			gridst.setnumber(x, y,grid[x][y].getOrbs());
-			gridst.setowner(x, y,grid[x][y].getP());
+
+			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+			gridst.grid.setowner(x, y, grid[x][y].getP());
+			print();
 		} else if (grid[x][y].getOrbs() == 1) {
 			boolean checkFlag = false;
 			try {
@@ -287,13 +292,15 @@ public class Grid extends GridPane {
 				counter--;
 			}
 			if (checkFlag == false) {
-				animation2(x, y, players,null);
+				animation2(x, y, players, null);
+				saveState(1);
 				this.grid[x][y].setP(players[counter - 1]);
 				checkCounter(players);
 				this.grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-				saveState();
-				gridst.setnumber(x, y,grid[x][y].getOrbs());
-				gridst.setowner(x, y,grid[x][y].getP());
+
+				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+				gridst.grid.setowner(x, y, grid[x][y].getP());
+				print();
 			}
 		} else if (grid[x][y].getOrbs() == 2) {
 			boolean checkFlag = false;
@@ -304,13 +311,15 @@ public class Grid extends GridPane {
 				counter--;
 			}
 			if (checkFlag == false) {
-				animation3(x, y, players,null);
+				animation3(x, y, players, null);
+				saveState(1);
 				this.grid[x][y].setP(players[counter - 1]);
 				checkCounter(players);
 				this.grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-				saveState();
-				gridst.setnumber(x, y,grid[x][y].getOrbs());
-				gridst.setowner(x, y,grid[x][y].getP());
+
+				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+				gridst.grid.setowner(x, y, grid[x][y].getP());
+				print();
 			}
 		} else {
 			boolean checkFlag = false;
@@ -321,6 +330,7 @@ public class Grid extends GridPane {
 				counter--;
 			}
 			if (checkFlag == false) {
+				saveState(1);
 				recursion(x, y, players);
 			}
 		}
@@ -330,11 +340,11 @@ public class Grid extends GridPane {
 	public void recursion(int x, int y, Player[] players) {
 		grid[x][y].setOrbs(0);
 		grid[x][y].setGraphic(null);
+		// saveState(1);
 		grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
 		grid[x][y].setP(null);
-		saveState();
-		gridst.setnumber(x, y,grid[x][y].getOrbs());
-		gridst.setowner(x, y,grid[x][y].getP());
+		gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+		gridst.grid.setowner(x, y, grid[x][y].getP());
 		Sphere s1 = new Sphere();
 		Sphere s2 = new Sphere();
 		Sphere s3 = new Sphere();
@@ -418,6 +428,7 @@ public class Grid extends GridPane {
 			boolean gameCheck = checkPlayers(players);
 			if (gameCheck == false) {
 				if (round == false) {
+					winner = true;
 					displayWinner();
 				}
 			}
@@ -426,6 +437,7 @@ public class Grid extends GridPane {
 
 	public void place(int x, int y, Player[] players) {
 		System.out.println(counter);
+		// saveState(1);
 		if (grid[x][y].getP() != null) {
 			// System.out.println(grid[x][y].getP().getCells() - 1);
 			grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
@@ -433,15 +445,14 @@ public class Grid extends GridPane {
 		grid[x][y].setP(players[counter - 1]);
 		players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 		grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-		saveState();
-		gridst.setnumber(x, y,grid[x][y].getOrbs());
-		gridst.setowner(x, y,grid[x][y].getP());
+		gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+		gridst.grid.setowner(x, y, grid[x][y].getP());
 		if (grid[x][y].getOrbs() == 1) {
-			animation1(x, y, players,null);
+			animation1(x, y, players, null);
 		} else if (grid[x][y].getOrbs() == 2) {
-			animation2(x, y, players,null);
+			animation2(x, y, players, null);
 		} else if (grid[x][y].getOrbs() == 3) {
-			animation3(x, y, players,null);
+			animation3(x, y, players, null);
 		} else {
 			animation4(x, y, players);
 		}
@@ -467,7 +478,7 @@ public class Grid extends GridPane {
 			flag = false;
 			for (int i = 0; i < players.length; i++) {
 				if (players[i] != null) {
-//					System.out.println("Player " + (i + 1) + " wins");
+					// System.out.println("Player " + (i + 1) + " wins");
 					break;
 				}
 			}
@@ -482,8 +493,8 @@ public class Grid extends GridPane {
 		s.setTranslateX(0);
 		s.setTranslateY(0);
 		PhongMaterial pm = new PhongMaterial();
-		if(players != null)
-		pm.setDiffuseColor(players[counter - 1].getColor());
+		if (players != null)
+			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
 		s.setMaterial(pm);
@@ -498,11 +509,11 @@ public class Grid extends GridPane {
 		this.grid[x][y].setGraphic(g);
 	}
 
-	public void animation2(int x, int y, Player[] players,Player cs) {
+	public void animation2(int x, int y, Player[] players, Player cs) {
 		Group g = new Group();
 		PhongMaterial pm = new PhongMaterial();
-		if(players != null)
-		pm.setDiffuseColor(players[counter - 1].getColor());
+		if (players != null)
+			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
 		Sphere s = new Sphere();
@@ -528,7 +539,7 @@ public class Grid extends GridPane {
 		this.grid[x][y].setGraphic(g);
 	}
 
-	public void animation3(int x, int y, Player[] players,Player cs) {
+	public void animation3(int x, int y, Player[] players, Player cs) {
 		Group g = new Group();
 		Sphere s = new Sphere();
 		s.setRadius(13.0);
@@ -543,11 +554,11 @@ public class Grid extends GridPane {
 		z.setTranslateX(12);
 		z.setTranslateY(4);
 		PhongMaterial pm = new PhongMaterial();
-		if(players != null)
+		if (players != null)
 			pm.setDiffuseColor(players[counter - 1].getColor());
-			else
-				pm.setDiffuseColor(cs.getColor());
-		
+		else
+			pm.setDiffuseColor(cs.getColor());
+
 		s.setMaterial(pm);
 		t.setMaterial(pm);
 		z.setMaterial(pm);
@@ -605,7 +616,7 @@ public class Grid extends GridPane {
 	}
 
 	public void displayWinner() {
-		round =true;
+		round = true;
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Game Ends");
 		alert.setHeaderText("Player " + (counter) + " wins");
@@ -623,11 +634,11 @@ public class Grid extends GridPane {
 	}
 
 	public void checkCounter(Player[] players) {
-		
+
 		if (counter > players.length) {
 			counter = 1;
 		}
-		gridst.count = counter;
+		gridst.grid.count = counter;
 	}
 
 	public void checkMove(int x, int y, Player[] players) throws invalid {
@@ -635,20 +646,46 @@ public class Grid extends GridPane {
 			throw new invalid("exception");
 		}
 	}
-	
-	public void saveState(){
-		gridundo = gridst;
-		gridundo.print();
+
+	public GameGUIStatus saveState(int i) {
+		if (i == 1) {
+			// if(gridundo!=null)
+			// //gridundo.print();
+			// else
+			// System.out.println("null");
+			// gridst.print();
+
+			gridundo = gridst;
+		}
+		System.out.println("Testing...");
+		gridundo.grid.print();
 		try {
-			GridStatus.serialize("GameUndo",gridundo);
+			GameGUIStatus.serialize("GameUndo", gridundo);
+
+			try {
+				gsundo = GameGUIStatus.deserialize("GameUndo");
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// gsundo.print();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return gsundo;
 	}
-	
-	public void saveUNDO() throws FileNotFoundException, IOException{
-		gridundo.print();
-		GridStatus.serialize("GameUndo",gridundo);
+
+	public void print() {
+		// gridst.print();
+		// System.out.println("2");
+		// gridundo.print();
+		// System.out.println("3");
+		// gsundo.grid.print();
 	}
+
+	public GameGUIStatus ss() {
+		return gsundo;
+	}
+
 }
