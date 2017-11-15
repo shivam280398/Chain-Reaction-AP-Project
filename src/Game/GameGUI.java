@@ -17,10 +17,15 @@ import Status.GridStatus;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -119,7 +124,28 @@ public class GameGUI extends Application {
 		HBox hbox = new HBox(5);
 		Button undoBtn = new Button("UNDO");
 		ObservableList<String> dropdown = FXCollections.observableArrayList("Start Again", "Exit");
-		final ComboBox dropdownMenu = new ComboBox(dropdown);
+		//final ComboBox dropdownMenu = new ComboBox(dropdown);
+		SplitMenuButton dropdownMenu = new SplitMenuButton();
+		MenuItem m1 = new MenuItem("Start Again");
+		MenuItem m2 = new MenuItem("Exit");
+		dropdownMenu.setText("Set");
+		dropdownMenu.getItems().addAll(m1,m2);
+		dropdownMenu.setOnMouseClicked(event ->{
+
+			
+				// TODO Auto-generated method stub
+				
+			System.out.println("hello");
+		 });
+		
+//		m1.setOnMouseClicked(event ->{
+//
+//			
+//			// TODO Auto-generated method stub
+//			
+//		System.out.println("hello");
+//	 });
+		
 		undoBtn.setId("Undo");
 		hbox.getChildren().addAll(undoBtn, dropdownMenu);
 		if (m == 6)
@@ -132,6 +158,22 @@ public class GameGUI extends Application {
 		mainScene.getStylesheets().add(getClass().getResource("/assets/stylesheetGame.css").toExternalForm());
 		root.setTop(hbox);
 		root.setCenter(grid);
+		m1.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent event) {
+		    	System.out.println("hello");
+		        Grid gNew = new Grid(m, n, players, count);
+		        root.setCenter(gNew);
+		    }
+		});
+		m2.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent event) {
+		    	System.out.println("hello");
+		        Grid gNew = new Grid(m, n, players, count);
+		        root.setCenter(gNew);
+		    }
+		});
 		GameGUIStatus gs = new GameGUIStatus(noOfplayers, grid.gridst.players, size, grid.gridst.grid);
 		if (grid.winner == false) {
 			mainStage.setOnCloseRequest(event -> {

@@ -81,6 +81,7 @@ public class Grid extends GridPane {
 				this.add(grid[i][j], i, j);
 			}
 		}
+		
 	}
 
 	public Grid(GridStatus _grid, Player[] players) {
@@ -351,6 +352,7 @@ public class Grid extends GridPane {
 		Sphere s4 = new Sphere();
 		PhongMaterial pm = new PhongMaterial();
 		pm.setDiffuseColor(players[counter - 1].getColor());
+		
 		s1.setMaterial(pm);
 		s2.setMaterial(pm);
 		s3.setMaterial(pm);
@@ -495,8 +497,10 @@ public class Grid extends GridPane {
 		PhongMaterial pm = new PhongMaterial();
 		if (players != null)
 			pm.setDiffuseColor(players[counter - 1].getColor());
+		
 		else
 			pm.setDiffuseColor(cs.getColor());
+		changeColor(players[counter - 1].getColor());
 		s.setMaterial(pm);
 		g.getChildren().add(s);
 		RotateTransition rotateTransition = new RotateTransition();
@@ -516,6 +520,7 @@ public class Grid extends GridPane {
 			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
+		changeColor(pm.getDiffuseColor());
 		Sphere s = new Sphere();
 		s.setRadius(12.0);
 		s.setTranslateX(0);
@@ -558,7 +563,7 @@ public class Grid extends GridPane {
 			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
-
+		changeColor(pm.getDiffuseColor());
 		s.setMaterial(pm);
 		t.setMaterial(pm);
 		z.setMaterial(pm);
@@ -686,6 +691,22 @@ public class Grid extends GridPane {
 
 	public GameGUIStatus ss() {
 		return gsundo;
+	}
+	
+	public void changeColor(Color color){
+		String col = String.valueOf(color);
+		System.out.println(col);
+		char[] arr = col.toCharArray();
+		String colore = "#";
+		for(int i=2;i<arr.length-2;i++){
+			colore = colore + arr[i];
+		}
+		System.out.println(colore);
+		for(int i=0;i<width;i++){
+			for(int j=0;j<height;j++){
+				grid[i][j].setStyle("-fx-border-color: " + colore +  ";");
+			}
+		}
 	}
 
 }

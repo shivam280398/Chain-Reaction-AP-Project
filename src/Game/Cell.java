@@ -5,6 +5,7 @@ import java.io.Serializable;
 import Settings.Player;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
 
 public class Cell extends Button{
 	private int x;
@@ -57,5 +58,10 @@ public class Cell extends Button{
 
 	public void setCriticalMass(int criticalMass) {
 		this.criticalMass = criticalMass;
+	}
+	
+	public void setColor(Color color){
+		
+		
 	}
 }
