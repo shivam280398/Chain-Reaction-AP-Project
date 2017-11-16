@@ -32,11 +32,6 @@ public class MainMenuGUI extends Application {
 	public MainMenuGUI mainMenu;
 	public GameGUI gameGUI;
 
-	// public MainMenuGUI(){
-	// //sett = new SettingsGUI();
-	// //gameGUI = new GameGUI();
-	// }
-
 	@Override
 	public void start(Stage mainStage) throws Exception {
 		mainMenu = new MainMenuGUI();

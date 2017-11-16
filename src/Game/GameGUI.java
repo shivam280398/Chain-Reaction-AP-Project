@@ -58,12 +58,12 @@ public class GameGUI extends Application {
 			players = new Player[noOfplayers];
 			Color[] clr = new Color[8];
 			clr[0] = Color.RED;
-			clr[1] = Color.YELLOW;
+			clr[1] = Color.GREEN;
 			clr[2] = Color.BLUE;
-			clr[3] = Color.BROWN;
+			clr[3] = Color.YELLOW;
 			clr[4] = Color.VIOLET;
 			clr[5] = Color.CRIMSON;
-			clr[6] = Color.HOTPINK;
+			clr[6] = Color.PINK;
 			clr[7] = Color.YELLOWGREEN;
 			for (int i = 0; i < noOfplayers; i++) {
 				players[i] = new Player(clr[i]);

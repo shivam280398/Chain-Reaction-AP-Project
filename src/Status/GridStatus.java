@@ -10,77 +10,91 @@ import java.io.Serializable;
 
 import Settings.Player;
 
-public class GridStatus implements Serializable{
-	
+/**
+ * <h1>Storing the State of the Grid</h1> The GridStatus program simply stores
+ * the state of the grid. The program is used to serialize and deserialize the
+ * state of the game.
+ *
+ *
+ */
+public class GridStatus implements Serializable {
+
 	public int height;
 	public int width;
 	public CellStatus[][] gridSt;
 	public int turn;
-	public int count=0;
+	public int count = 0;
 	public boolean winner = false;
-	
-	public GridStatus(int _height,int _width,int counter){
-		
-		this.height = _height;
-		this.width = _width;
+
+	/**
+	 * This constructor is used to initialize the grid state object.
+	 * 
+	 * @param height
+	 *            This is the height of the grid.
+	 * @param width
+	 *            The is the width of the grid.
+	 * @param counter
+	 *            The variable stores the turn number in the game.
+	 * 
+	 */
+	public GridStatus(int height, int width, int counter) {
+
+		this.height = height;
+		this.width = width;
 		count = counter;
 		gridSt = new CellStatus[height][width];
-		for(int i=0;i<_height;i++){
-			for(int j = 0;j<_width;j++){
-				gridSt[i][j] = new CellStatus(0,null);
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				gridSt[i][j] = new CellStatus(0, null);
 			}
 		}
-		
+
 	}
-	
-	public void setowner(int x,int y,Player p){
-		gridSt[x][y].currentOwner = p;
+
+	/**
+	 * This method is used to set the current owner of a cell in the grid.
+	 * 
+	 * @param x x-coordinate of the cell.
+	 * @param y y-coordinate of the cell.
+	 * @param p current owner of the cell.
+	 */
+	public void setowner(int x, int y, Player p) {
+		gridSt[x][y].setCurrentOwner(p);
 	}
+
 	
-	public void setnumber(int x,int y,int _n){
-		gridSt[x][y].noOfOrbs = _n;
+	/**
+	 * This method is used to set the number of orbs in a  cell in the grid.
+	 * 
+	 * @param x x-coordinate of the cell.
+	 * @param y y-coordinate of the cell.
+	 * @param _n current number of orbs in the cell.
+	 */
+	public void setnumber(int x, int y, int _n) {
+		gridSt[x][y].setNoOfOrbs(_n);
 	}
-	
-	public void updateturn(int counter){
+
+	/**
+	 * This method is used to update the turn number of the player in the game.
+	 * 
+	 * @param counter current turn number in the game.
+	 */
+	public void updateturn(int counter) {
 		turn = counter;
 	}
 	
-	public void print(){
-		for(int i=0;i<width;i++){
-			for(int j=0;j<height;j++){
+	
+	/**
+	 * This method is used to print the current status of the GridStatus class.
+	 */
+	public void print() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				System.out.print(gridSt[j][i].noOfOrbs + " ");
-//				if(gridSt[j][i].currentOwner!=null){
-//					System.out.print(gridSt[j][i].currentOwner.getColor());
-//				}
 			}
 			System.out.println();
 		}
 		System.out.println();
-	}
-	
-	public static void serialize(String pathname, GridStatus pl) throws FileNotFoundException, IOException {
-		ObjectOutputStream out = null;
-		try {
-
-			out = new ObjectOutputStream(new FileOutputStream("src/" + pathname + ".txt"));
-			out.writeObject(pl);
-
-		} finally {
-			out.close();
-		}
-	}
-
-	public static GridStatus deserialize(String pathname) throws IOException, ClassNotFoundException {
-		ObjectInputStream in = null;
-		GridStatus gameGUI = null;
-		try {
-			in = new ObjectInputStream(new FileInputStream("src/" + pathname + ".txt"));
-			gameGUI = (GridStatus) in.readObject();
-
-		} finally {
-			in.close();
-		}
-		return gameGUI;
 	}
 
 }
