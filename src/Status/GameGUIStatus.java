@@ -30,6 +30,10 @@ public class GameGUIStatus implements Serializable{
 		
 	}
 	
+	public GameGUIStatus() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public static void serialize(String pathname, GameGUIStatus pl) throws FileNotFoundException, IOException {
 		ObjectOutputStream out = null;
 		try {

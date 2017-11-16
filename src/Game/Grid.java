@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import MainMenu.MainMenuGUI;
 import Settings.Player;
-import Status.CellStatus;
 import Status.GameGUIStatus;
 import Status.GridStatus;
 import javafx.animation.Interpolator;
@@ -28,8 +27,8 @@ import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-class invalid extends Exception {
-	invalid(String msg) {
+class InvalidMoveException extends Exception {
+	InvalidMoveException(String msg) {
 		super(msg);
 	}
 }
@@ -44,11 +43,13 @@ public class Grid extends GridPane {
 	public boolean winner = false;
 	private boolean round = false;
 	int counter;
+	int nextCounter;
 	public GameGUIStatus gsundo = null;
 
 	public Grid(int x, int y, Player[] players, int count) {
 		super();
 		counter = count;
+		nextCounter = count+1;
 		this.height = y;
 		this.width = x;
 		grid = new Cell[x][y];
@@ -81,7 +82,7 @@ public class Grid extends GridPane {
 				this.add(grid[i][j], i, j);
 			}
 		}
-		
+
 	}
 
 	public Grid(GridStatus _grid, Player[] players) {
@@ -200,7 +201,7 @@ public class Grid extends GridPane {
 			boolean checkFlag = false;
 			try {
 				checkMove(x, y, players);
-			} catch (invalid e) {
+			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
 			}
@@ -234,7 +235,7 @@ public class Grid extends GridPane {
 			boolean checkFlag = false;
 			try {
 				checkMove(x, y, players);
-			} catch (invalid e) {
+			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
 			}
@@ -252,7 +253,7 @@ public class Grid extends GridPane {
 			boolean checkFlag = false;
 			try {
 				checkMove(x, y, players);
-			} catch (invalid e) {
+			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
 			}
@@ -283,12 +284,11 @@ public class Grid extends GridPane {
 
 			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 			gridst.grid.setowner(x, y, grid[x][y].getP());
-			print();
 		} else if (grid[x][y].getOrbs() == 1) {
 			boolean checkFlag = false;
 			try {
 				checkMove(x, y, players);
-			} catch (invalid e) {
+			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
 			}
@@ -301,13 +301,12 @@ public class Grid extends GridPane {
 
 				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 				gridst.grid.setowner(x, y, grid[x][y].getP());
-				print();
 			}
 		} else if (grid[x][y].getOrbs() == 2) {
 			boolean checkFlag = false;
 			try {
 				checkMove(x, y, players);
-			} catch (invalid e) {
+			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
 			}
@@ -320,13 +319,12 @@ public class Grid extends GridPane {
 
 				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 				gridst.grid.setowner(x, y, grid[x][y].getP());
-				print();
 			}
 		} else {
 			boolean checkFlag = false;
 			try {
 				checkMove(x, y, players);
-			} catch (invalid e) {
+			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
 			}
@@ -352,7 +350,7 @@ public class Grid extends GridPane {
 		Sphere s4 = new Sphere();
 		PhongMaterial pm = new PhongMaterial();
 		pm.setDiffuseColor(players[counter - 1].getColor());
-		
+
 		s1.setMaterial(pm);
 		s2.setMaterial(pm);
 		s3.setMaterial(pm);
@@ -497,10 +495,10 @@ public class Grid extends GridPane {
 		PhongMaterial pm = new PhongMaterial();
 		if (players != null)
 			pm.setDiffuseColor(players[counter - 1].getColor());
-		
+
 		else
 			pm.setDiffuseColor(cs.getColor());
-		changeColor(players[counter - 1].getColor());
+		// changeColor(players[counter - 1].getColor());
 		s.setMaterial(pm);
 		g.getChildren().add(s);
 		RotateTransition rotateTransition = new RotateTransition();
@@ -520,7 +518,7 @@ public class Grid extends GridPane {
 			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
-		changeColor(pm.getDiffuseColor());
+		// changeColor(pm.getDiffuseColor());
 		Sphere s = new Sphere();
 		s.setRadius(12.0);
 		s.setTranslateX(0);
@@ -563,7 +561,6 @@ public class Grid extends GridPane {
 			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
-		changeColor(pm.getDiffuseColor());
 		s.setMaterial(pm);
 		t.setMaterial(pm);
 		z.setMaterial(pm);
@@ -620,24 +617,6 @@ public class Grid extends GridPane {
 		this.grid[x][y].setGraphic(g);
 	}
 
-	public void displayWinner() {
-		round = true;
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Game Ends");
-		alert.setHeaderText("Player " + (counter) + " wins");
-		alert.setContentText("Play again");
-		alert.setOnHidden(evt -> {
-			try {
-				getScene().getWindow().hide();
-				new MainMenuGUI().start(new Stage());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		alert.show();
-
-	}
-
 	public void checkCounter(Player[] players) {
 
 		if (counter > players.length) {
@@ -646,67 +625,69 @@ public class Grid extends GridPane {
 		gridst.grid.count = counter;
 	}
 
-	public void checkMove(int x, int y, Player[] players) throws invalid {
+	public void checkMove(int x, int y, Player[] players) throws InvalidMoveException {
 		if (!grid[x][y].getP().equals(players[counter - 1])) {
-			throw new invalid("exception");
+			throw new InvalidMoveException("exception");
 		}
 	}
 
 	public GameGUIStatus saveState(int i) {
 		if (i == 1) {
-			// if(gridundo!=null)
-			// //gridundo.print();
-			// else
-			// System.out.println("null");
-			// gridst.print();
-
 			gridundo = gridst;
 		}
-		System.out.println("Testing...");
-		gridundo.grid.print();
 		try {
 			GameGUIStatus.serialize("GameUndo", gridundo);
-
 			try {
 				gsundo = GameGUIStatus.deserialize("GameUndo");
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// gsundo.print();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return gsundo;
 	}
 
-	public void print() {
-		// gridst.print();
-		// System.out.println("2");
-		// gridundo.print();
-		// System.out.println("3");
-		// gsundo.grid.print();
-	}
-
 	public GameGUIStatus ss() {
 		return gsundo;
 	}
-	
-	public void changeColor(Color color){
+
+	public void changeColor(Color color) {
 		String col = String.valueOf(color);
 		System.out.println(col);
 		char[] arr = col.toCharArray();
 		String colore = "#";
-		for(int i=2;i<arr.length-2;i++){
+		for (int i = 2; i < arr.length - 2; i++) {
 			colore = colore + arr[i];
 		}
 		System.out.println(colore);
-		for(int i=0;i<width;i++){
-			for(int j=0;j<height;j++){
-				grid[i][j].setStyle("-fx-border-color: " + colore +  ";");
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				grid[i][j].setStyle("-fx-border-color: " + colore + ";");
 			}
 		}
+	}
+
+	public void displayWinner() {
+		round = true;
+		System.out.println("hgh" + counter);
+		winner = true;
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Game Ends");
+		alert.setHeaderText("Player " + (counter) + " wins");
+		alert.setContentText("Play again");
+		alert.setOnHidden(evt -> {
+			try {
+				gridst.grid.winner = true;
+				GameGUIStatus.serialize("GamePlay", gridst);
+				getScene().getWindow().hide();
+				new MainMenuGUI().start(new Stage());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		alert.show();
+
 	}
 
 }

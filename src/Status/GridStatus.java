@@ -17,6 +17,7 @@ public class GridStatus implements Serializable{
 	public CellStatus[][] gridSt;
 	public int turn;
 	public int count=0;
+	public boolean winner = false;
 	
 	public GridStatus(int _height,int _width,int counter){
 		

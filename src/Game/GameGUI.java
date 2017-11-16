@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Scanner;
+
+import MainMenu.MainMenuGUI;
 import Settings.Player;
 import Settings.Settings;
 import Settings.SettingsGUI;
@@ -22,8 +24,11 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.layout.BorderPane;
@@ -63,10 +68,7 @@ public class GameGUI extends Application {
 			for (int i = 0; i < noOfplayers; i++) {
 				players[i] = new Player(clr[i]);
 			}
-
-			// setting.setting.players = players;
-		}
-
+	}
 		count = 0;
 		if (size.equals("9X6")) {
 			m = 6;
@@ -119,69 +121,69 @@ public class GameGUI extends Application {
 	@Override
 	public void start(Stage mainStage) throws Exception {
 
-		Scanner s = new Scanner(System.in);
 		mainStage.setTitle("Chain Reaction");
+		
 		HBox hbox = new HBox(5);
 		Button undoBtn = new Button("UNDO");
-		ObservableList<String> dropdown = FXCollections.observableArrayList("Start Again", "Exit");
-		//final ComboBox dropdownMenu = new ComboBox(dropdown);
-		SplitMenuButton dropdownMenu = new SplitMenuButton();
+		MenuButton dropdownMenu = new MenuButton();
 		MenuItem m1 = new MenuItem("Start Again");
 		MenuItem m2 = new MenuItem("Exit");
-		dropdownMenu.setText("Set");
-		dropdownMenu.getItems().addAll(m1,m2);
-		dropdownMenu.setOnMouseClicked(event ->{
-
-			
-				// TODO Auto-generated method stub
-				
-			System.out.println("hello");
-		 });
-		
-//		m1.setOnMouseClicked(event ->{
-//
-//			
-//			// TODO Auto-generated method stub
-//			
-//		System.out.println("hello");
-//	 });
-		
+		dropdownMenu.setText("|||");
+		dropdownMenu.getItems().addAll(m1, m2);
 		undoBtn.setId("Undo");
 		hbox.getChildren().addAll(undoBtn, dropdownMenu);
+		hbox.setId("DDMenu");
 		if (m == 6)
-			hbox.setPadding(new Insets(10, 0, 5, 150));
+			hbox.setPadding(new Insets(10, 0, 5, 180));
 		else
-			hbox.setPadding(new Insets(10, 0, 5, 220));
+			hbox.setPadding(new Insets(10, 0, 5, 250));
+		
 		BorderPane root = new BorderPane();
 		Scene mainScene = new Scene(root);
 		mainStage.setScene(mainScene);
 		mainScene.getStylesheets().add(getClass().getResource("/assets/stylesheetGame.css").toExternalForm());
+		
 		root.setTop(hbox);
 		root.setCenter(grid);
+		
 		m1.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override
-		    public void handle(ActionEvent event) {
-		    	System.out.println("hello");
-		        Grid gNew = new Grid(m, n, players, count);
-		        root.setCenter(gNew);
-		    }
-		});
-		m2.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override
-		    public void handle(ActionEvent event) {
-		    	System.out.println("hello");
-		        Grid gNew = new Grid(m, n, players, count);
-		        root.setCenter(gNew);
-		    }
+			@Override
+			public void handle(ActionEvent event) {
+				Grid gNew = new Grid(m, n, players, count);
+				root.setCenter(gNew);
+			}
 		});
 		GameGUIStatus gs = new GameGUIStatus(noOfplayers, grid.gridst.players, size, grid.gridst.grid);
-		if (grid.winner == false) {
-			mainStage.setOnCloseRequest(event -> {
+			
+		m2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				mainStage.close();
+				try {
+					
+					grid.gridst.grid.print();
+					gs.grid = grid.gridst.grid;
+					gs.players = grid.gridst.players;
+					gs.grid.print();
+					gs.grid.winner = grid.winner;
+					System.out.println(grid.winner);
+					GameGUIStatus.serialize("GamePlay", gs);
+					new MainMenuGUI().start(new Stage());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		mainStage.setOnCloseRequest(event -> {
 				try {
 					grid.gridst.grid.print();
 					gs.grid = grid.gridst.grid;
 					gs.players = grid.gridst.players;
 					gs.grid.print();
+					gs.grid.winner = grid.winner;
+					System.out.println(grid.winner);
 					GameGUIStatus.serialize("GamePlay", gs);
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
@@ -191,17 +193,12 @@ public class GameGUI extends Application {
 					e.printStackTrace();
 				}
 			});
-		}
-		if (grid.winner == true) {
-			File file = new File("GamePlay");
-			file.delete();
-		}
+		
+		
 
 		undoBtn.setOnMouseClicked(event -> {
 			try {
-				System.out.println("LIT AF");
 				GameGUIStatus gsundo = grid.ss();
-				gsundo.grid.print();
 				gsundo.grid.count -= 1;
 				grid = new Grid(gsundo.grid, gsundo.players);
 				grid.gridst = gsundo;
@@ -237,5 +234,9 @@ public class GameGUI extends Application {
 		}
 		return flag;
 	}
+	
+	
 
 }
+
+

@@ -31,13 +31,13 @@ public class SettingsGUI extends Application {
 
 	public int noOfplayers;
 	public Settings setting;
-	public MainMenuGUI mainMenu;
+	public Stage mainMenuStage;
 	
-	public SettingsGUI(String _noOfPlayers,MainMenuGUI _mainMenu){
+	public SettingsGUI(String _noOfPlayers,Stage _mainMenu){
 		int nPlayers=Integer.parseInt(_noOfPlayers);
 		this.noOfplayers = nPlayers;
 		setting = new Settings(noOfplayers);
-		mainMenu = _mainMenu;
+		mainMenuStage = _mainMenu;
 		//System.out.println(mainMenu.sett.noOfplayers);
 	}
 	
@@ -80,8 +80,10 @@ public class SettingsGUI extends Application {
 		
 		mainmenuBtn.setOnMouseClicked(event -> {
 			try {
-				mainMenu.start( new Stage());
+				//mainMenu.start( new Stage());
 				mainStage.close();
+				mainMenuStage.show();
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
