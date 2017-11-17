@@ -36,7 +36,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
+/**
+ * <h1>Game GUI class</h1> The program is used to implement GUI
+ * for the grid.
+ *
+ *
+ */
 public class GameGUI extends Application {
 
 	public Grid grid;
@@ -46,7 +51,16 @@ public class GameGUI extends Application {
 	public SettingsGUI setting;
 	public int count;
 	int m = 0, n = 0;
-
+	/**
+	 * This constructor is used to initialize the grid of the game.
+	 * 
+	 * @param c
+	 *           size of the grid.
+	 * @param _n
+	 * 			number of players.
+	 * @param _setting
+	 * 			setting class of the game.
+	 */
 	public GameGUI(String c, String _n, SettingsGUI _setting) {
 
 		size = c;
@@ -80,7 +94,22 @@ public class GameGUI extends Application {
 		grid = new Grid(m, n, players, count);
 
 	}
-
+	/**
+	 * This constructor is used to initialize the grid of the game
+	 * for undo and resume functionality.
+	 * 
+	 * @param _size
+	 *           size of the grid.
+	 * @param _n
+	 * 			number of players.
+	 * @param plist
+	 * 			array containing players.
+	 * @param turn
+	 * 			integer having the turn stored as a number.
+	 * @param _grid
+	 * 			Object of the class of gridStatus which stores
+	 * 			status of grid at any point of time.
+	 */
 	public GameGUI(String _size, int _n, Player[] plist, int turn, GridStatus _grid) {
 
 		size = _size;
@@ -96,33 +125,67 @@ public class GameGUI extends Application {
 			n = 15;
 		}
 	}
-
+	/**
+	 * This method is used to get the number of players
+	 * playing the game.
+	 * @return noOfplayers
+	 * 			players playing the game.
+	 * 
+	 */
 	public int getNoOfplayers() {
 		return noOfplayers;
 	}
-
+	/**
+	 * This method is used to assign number of players.
+	 * 
+	 * @param noOfplayers
+	 *            number of players to include.
+	 */
 	public void setNoOfplayers(int noOfplayers) {
 		this.noOfplayers = noOfplayers;
 	}
-
+	/**
+	 * This method is used to get the size of the grid.
+	 * @return size
+	 * 			size of the game.
+	 * 
+	 */
 	public String getSize() {
 		return size;
 	}
-
+	/**
+	 * This method is used to assign size to the grid.
+	 * 
+	 * @param size
+	 *            size of grid.
+	 */
 	public void setSize(String size) {
 		this.size = size;
 	}
+	/**
+	 * This method is used to launch the GUI for Game Class. 
+	 * 
+	 * @param args
+	 */
 
 	public static void main(String[] args) {
 		launch(args);
 
 	}
-
+	/**
+	 * This method is used as the application initialization method. This method is called immediately after 
+	 * the Application class is loaded and constructed. 
+	 * 
+	 * @param mainStage mainStage of GUI
+	 */
 	@Override
 	public void start(Stage mainStage) throws Exception {
 
 		mainStage.setTitle("Chain Reaction");
-		
+		Player[] copy=new Player[players.length];
+		for(int i=0;i<copy.length;i++) {
+			copy[i]=players[i];
+		}
 		HBox hbox = new HBox(5);
 		Button undoBtn = new Button("UNDO");
 		MenuButton dropdownMenu = new MenuButton();
@@ -149,7 +212,7 @@ public class GameGUI extends Application {
 		m1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Grid gNew = new Grid(m, n, players, count);
+				Grid gNew = new Grid(m, n, copy, 0);
 				root.setCenter(gNew);
 			}
 		});
@@ -211,30 +274,6 @@ public class GameGUI extends Application {
 		boolean check = true;
 		mainStage.show();
 	}
-
-	public static boolean checkPlayers(Player[] players) {
-		int count = 0;
-		boolean flag = true;
-		for (int i = 0; i < players.length; i++) {
-			if (players[i] == null) {
-				count++;
-			} else if (players[i].getCells() == 0) {
-				players[i] = null;
-				count++;
-			}
-		}
-		if (count == players.length - 1) {
-			flag = false;
-			for (int i = 0; i < players.length; i++) {
-				if (players[i] != null) {
-					System.out.println("Player " + i + " wins");
-					break;
-				}
-			}
-		}
-		return flag;
-	}
-	
 	
 
 }
