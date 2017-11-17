@@ -43,7 +43,6 @@ public class Grid extends GridPane {
 	private DropShadow shadow = new DropShadow();
 	public boolean winner = false;
 	private boolean round = false;
-	private boolean gamefinish = false;
 	int counter;
 	int nextColorTurn = 0;
 	public GameGUIStatus gsundo = null;
@@ -85,21 +84,24 @@ public class Grid extends GridPane {
 		int y = height;
 		int x = width;
 		_grid.print();
+
 		counter = _grid.count;
-		// System.out.println(counter);
-		nextColorTurn = _grid.turn-1;
-		
+		nextColorTurn = _grid.count;
+		int tr = counter;
 		grid = new Cell[width][height];
-		System.out.println(height + " " + width);
 		gridst = new GameGUIStatus(players.length, players, y + "X" + x, _grid);
 		gridundo = new GameGUIStatus(players.length, players, y + "X" + x, new GridStatus(x, y, counter));
-		// saveState(1);
-
+		checkClr(players);
+		if (players[nextColorTurn] == null) {
+			while (players[nextColorTurn] == null) {
+				nextColorTurn++;
+				checkClr(players);
+			}
+		}
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				int temp1 = i;
 				int temp2 = j;
-				// System.out.println(i + " " + j);
 				grid[i][j] = new Cell(i, j);
 				grid[i][j].setEffect(shadow);
 				if (width == 10 && height == 15) {
@@ -112,22 +114,16 @@ public class Grid extends GridPane {
 				}
 				if (_grid.gridSt[i][j].noOfOrbs == 1) {
 					grid[i][j].setOrbs(1);
-
-					// System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
 					animation1(i, j, null, _grid.gridSt[i][j].currentOwner);
 				}
 
 				else if (_grid.gridSt[i][j].noOfOrbs == 2) {
 					grid[i][j].setOrbs(2);
-					// System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
-
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
 					animation2(i, j, null, _grid.gridSt[i][j].currentOwner);
 				} else if (_grid.gridSt[i][j].noOfOrbs == 3) {
 					grid[i][j].setOrbs(3);
-					// System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
-
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
 					animation3(i, j, null, _grid.gridSt[i][j].currentOwner);
 				}
@@ -135,7 +131,7 @@ public class Grid extends GridPane {
 				this.add(grid[i][j], i, j);
 			}
 		}
-		
+
 		changeColor(players[nextColorTurn].getColor());
 	}
 
@@ -166,7 +162,6 @@ public class Grid extends GridPane {
 	public void OrbsEvent1(int x, int y, Player[] players) {
 		counter++;
 		checkCounter(players);
-		System.out.println(counter);
 		nextColorTurn++;
 		checkClr(players);
 		if (players[counter - 1] == null) {
@@ -175,7 +170,6 @@ public class Grid extends GridPane {
 				checkCounter(players);
 			}
 		}
-		System.out.println("pls see " + nextColorTurn);
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
 			saveState(1);
@@ -212,7 +206,6 @@ public class Grid extends GridPane {
 	public void OrbsEvent2(int x, int y, Player[] players) {
 		counter++;
 		checkCounter(players);
-		System.out.println(counter);
 		nextColorTurn++;
 		checkClr(players);
 		if (players[counter - 1] == null) {
@@ -221,7 +214,6 @@ public class Grid extends GridPane {
 				checkCounter(players);
 			}
 		}
-		System.out.println("pls see " + nextColorTurn);
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
 			saveState(1);
@@ -290,7 +282,6 @@ public class Grid extends GridPane {
 				checkCounter(players);
 			}
 		}
-		System.out.println("pls see " + nextColorTurn);
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
 			saveState(1);
@@ -375,14 +366,7 @@ public class Grid extends GridPane {
 	}
 
 	public void recursion(int x, int y, Player[] players) {
-		// grid[x][y].setOrbs(0);
-		// grid[x][y].setGraphic(null);
-		// saveState(1);
-		// grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
-		// grid[x][y].setP(null);
-		// gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
-		// gridst.grid.setowner(x, y, grid[x][y].getP());
-		if (gamefinish == false) {
+		if (winner == false) {
 			disable();
 			Sphere s1 = new Sphere();
 			Sphere s2 = new Sphere();
@@ -454,8 +438,7 @@ public class Grid extends GridPane {
 			pt.play();
 			this.grid[x][y].setGraphic(g);
 			pt.setOnFinished(e -> {
-				// this.grid[x][y].setGraphic(null);
-				if (gamefinish == false) {
+				if (winner == false) {
 					int n = grid[x][y].getOrbs() - (grid[x][y].getCriticalMass());
 					if (n <= 0) {
 						grid[x][y].setOrbs(0);
@@ -474,32 +457,27 @@ public class Grid extends GridPane {
 					boolean condition3 = false;
 					boolean condition4 = false;
 					if (x > 0) {
-						// System.out.println("see me");
 						place(x - 1, y, players);
 						if (grid[x - 1][y].getOrbs() == grid[x - 1][y].getCriticalMass()) {
 							condition1 = true;
-							// recursion(x - 1, y, players);
 						}
 					}
 					if (x < width - 1) {
 						place(x + 1, y, players);
 						if (grid[x + 1][y].getOrbs() == grid[x + 1][y].getCriticalMass()) {
 							condition2 = true;
-							// recursion(x + 1, y, players);
 						}
 					}
 					if (y > 0) {
 						place(x, y - 1, players);
 						if (grid[x][y - 1].getOrbs() == grid[x][y - 1].getCriticalMass()) {
 							condition3 = true;
-							// recursion(x, y - 1, players);
 						}
 					}
 					if (y < height - 1) {
 						place(x, y + 1, players);
 						if (grid[x][y + 1].getOrbs() == grid[x][y + 1].getCriticalMass()) {
 							condition4 = true;
-							// recursion(x, y + 1, players);
 						}
 					}
 					boolean gameCheck = checkPlayers(players);
@@ -516,7 +494,7 @@ public class Grid extends GridPane {
 						}
 					}
 					changeColor(players[nextColorTurn].getColor());
-					if (gamefinish == false) {
+					if (winner == false) {
 						if (condition1 == true) {
 							recursion(x - 1, y, players);
 						}
@@ -524,8 +502,6 @@ public class Grid extends GridPane {
 							recursion(x + 1, y, players);
 						}
 						if (condition3 == true) {
-							// System.out.println("here see x and y" + x + " " +
-							// y);
 							recursion(x, y - 1, players);
 						}
 						if (condition4 == true) {
@@ -539,10 +515,7 @@ public class Grid extends GridPane {
 	}
 
 	public void place(int x, int y, Player[] players) {
-		System.out.println(counter);
-		// saveState(1);
 		if (grid[x][y].getP() != null) {
-			// System.out.println(grid[x][y].getP().getCells() - 1);
 			grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
 		}
 		grid[x][y].setP(players[counter - 1]);
@@ -717,7 +690,7 @@ public class Grid extends GridPane {
 		if (nextColorTurn >= players.length) {
 			nextColorTurn = 0;
 		}
-		 gridst.grid.turn = nextColorTurn;
+		gridst.grid.turn = nextColorTurn;
 	}
 
 	public void checkMove(int x, int y, Player[] players) throws InvalidMoveException {
@@ -749,13 +722,11 @@ public class Grid extends GridPane {
 
 	public void changeColor(Color color) {
 		String col = String.valueOf(color);
-		// System.out.println(col);
 		char[] arr = col.toCharArray();
 		String colore = "#";
 		for (int i = 2; i < arr.length - 2; i++) {
 			colore = colore + arr[i];
 		}
-		// System.out.println(colore);
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				grid[i][j].setStyle("-fx-border-color: " + colore + ";");
