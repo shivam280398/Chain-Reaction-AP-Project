@@ -120,3 +120,6 @@ visibility: true;
 .button:default:hover {
     -fx-background-color: derive(-fx-focus-color,30%);
 }
+
+/*Reference : JAVAFX ESSENTIALS BY MOHAMED TAMAN */
+/*For styling Buttons in the pane */

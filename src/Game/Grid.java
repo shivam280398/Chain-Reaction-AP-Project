@@ -7,6 +7,7 @@ import MainMenu.MainMenuGUI;
 import Settings.Player;
 import Status.GameGUIStatus;
 import Status.GridStatus;
+import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
@@ -42,14 +43,14 @@ public class Grid extends GridPane {
 	private DropShadow shadow = new DropShadow();
 	public boolean winner = false;
 	private boolean round = false;
+	private boolean gamefinish = false;
 	int counter;
-	int nextCounter;
+	int nextColorTurn = 0;
 	public GameGUIStatus gsundo = null;
 
 	public Grid(int x, int y, Player[] players, int count) {
 		super();
 		counter = count;
-		nextCounter = count+1;
 		this.height = y;
 		this.width = x;
 		grid = new Cell[x][y];
@@ -69,24 +70,15 @@ public class Grid extends GridPane {
 					grid[i][j].setMinSize(60, 60);
 					grid[i][j].setMaxSize(60, 60);
 				}
-				if ((i == 0 && (j == 0 || j == (y - 1))) || (i == (x - 1) && (j == 0 || j == (y - 1)))) {
-					grid[i][j].setOnAction(e -> OrbsEvent1(temp1, temp2, players));
-					grid[i][j].setCriticalMass(1);
-				} else if ((i == 0 || i == (x - 1)) || (j == 0 || j == (y - 1))) {
-					grid[i][j].setOnAction(e -> OrbsEvent2(temp1, temp2, players));
-					grid[i][j].setCriticalMass(2);
-				} else {
-					grid[i][j].setOnAction(e -> OrbsEvent3(temp1, temp2, players));
-					grid[i][j].setCriticalMass(3);
-				}
+				actionListener(i, j, y, x, players);
 				this.add(grid[i][j], i, j);
 			}
 		}
+		changeColor(players[nextColorTurn].getColor());
 
 	}
 
 	public Grid(GridStatus _grid, Player[] players) {
-		// TODO Auto-generated constructor stub
 		super();
 		this.height = _grid.width;
 		this.width = _grid.height;
@@ -94,7 +86,9 @@ public class Grid extends GridPane {
 		int x = width;
 		_grid.print();
 		counter = _grid.count;
-		System.out.println(counter);
+		// System.out.println(counter);
+		nextColorTurn = _grid.turn-1;
+		
 		grid = new Cell[width][height];
 		System.out.println(height + " " + width);
 		gridst = new GameGUIStatus(players.length, players, y + "X" + x, _grid);
@@ -105,7 +99,7 @@ public class Grid extends GridPane {
 			for (int j = 0; j < height; j++) {
 				int temp1 = i;
 				int temp2 = j;
-				System.out.println(i + "  " + j);
+				// System.out.println(i + " " + j);
 				grid[i][j] = new Cell(i, j);
 				grid[i][j].setEffect(shadow);
 				if (width == 10 && height == 15) {
@@ -119,39 +113,30 @@ public class Grid extends GridPane {
 				if (_grid.gridSt[i][j].noOfOrbs == 1) {
 					grid[i][j].setOrbs(1);
 
-					System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
+					// System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
 					animation1(i, j, null, _grid.gridSt[i][j].currentOwner);
 				}
 
 				else if (_grid.gridSt[i][j].noOfOrbs == 2) {
 					grid[i][j].setOrbs(2);
-					System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
+					// System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
 
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
 					animation2(i, j, null, _grid.gridSt[i][j].currentOwner);
 				} else if (_grid.gridSt[i][j].noOfOrbs == 3) {
 					grid[i][j].setOrbs(3);
-					System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
+					// System.out.println(_grid.gridSt[i][j].currentOwner.getColor());
 
 					grid[i][j].setP(_grid.gridSt[i][j].currentOwner);
 					animation3(i, j, null, _grid.gridSt[i][j].currentOwner);
 				}
-
-				if ((i == 0 && (j == 0 || j == (y - 1))) || (i == (x - 1) && (j == 0 || j == (y - 1)))) {
-					grid[i][j].setOnAction(e -> OrbsEvent1(temp1, temp2, players));
-					grid[i][j].setCriticalMass(1);
-				} else if ((i == 0 || i == (x - 1)) || (j == 0 || j == (y - 1))) {
-					grid[i][j].setOnAction(e -> OrbsEvent2(temp1, temp2, players));
-					grid[i][j].setCriticalMass(2);
-				} else {
-					grid[i][j].setOnAction(e -> OrbsEvent3(temp1, temp2, players));
-					grid[i][j].setCriticalMass(3);
-				}
-
+				actionListener(i, j, y, x, players);
 				this.add(grid[i][j], i, j);
 			}
 		}
+		
+		changeColor(players[nextColorTurn].getColor());
 	}
 
 	public Cell[][] getGrid() {
@@ -181,17 +166,28 @@ public class Grid extends GridPane {
 	public void OrbsEvent1(int x, int y, Player[] players) {
 		counter++;
 		checkCounter(players);
+		System.out.println(counter);
+		nextColorTurn++;
+		checkClr(players);
 		if (players[counter - 1] == null) {
 			while (players[counter - 1] == null) {
 				counter++;
 				checkCounter(players);
 			}
 		}
+		System.out.println("pls see " + nextColorTurn);
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
 			saveState(1);
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
+			if (players[nextColorTurn] == null) {
+				while (players[nextColorTurn] == null) {
+					nextColorTurn++;
+					checkClr(players);
+				}
+			}
+			changeColor(players[nextColorTurn].getColor());
 			checkCounter(players);
 			grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
 			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
@@ -204,6 +200,7 @@ public class Grid extends GridPane {
 			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
+				nextColorTurn--;
 			}
 			if (checkFlag == false) {
 				saveState(1);
@@ -215,20 +212,30 @@ public class Grid extends GridPane {
 	public void OrbsEvent2(int x, int y, Player[] players) {
 		counter++;
 		checkCounter(players);
+		System.out.println(counter);
+		nextColorTurn++;
+		checkClr(players);
 		if (players[counter - 1] == null) {
 			while (players[counter - 1] == null) {
 				counter++;
 				checkCounter(players);
 			}
 		}
+		System.out.println("pls see " + nextColorTurn);
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
 			saveState(1);
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
+			if (players[nextColorTurn] == null) {
+				while (players[nextColorTurn] == null) {
+					nextColorTurn++;
+					checkClr(players);
+				}
+			}
+			changeColor(players[nextColorTurn].getColor());
 			checkCounter(players);
 			grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-
 			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 			gridst.grid.setowner(x, y, grid[x][y].getP());
 		} else if (grid[x][y].getOrbs() == 1) {
@@ -238,13 +245,20 @@ public class Grid extends GridPane {
 			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
+				nextColorTurn--;
 			}
 			if (checkFlag == false) {
 				saveState(1);
 				grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
+				if (players[nextColorTurn] == null) {
+					while (players[nextColorTurn] == null) {
+						nextColorTurn++;
+						checkClr(players);
+					}
+				}
+				changeColor(players[nextColorTurn].getColor());
 				animation2(x, y, players, null);
 				this.grid[x][y].setP(players[counter - 1]);
-
 				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 				gridst.grid.setowner(x, y, grid[x][y].getP());
 				checkCounter(players);
@@ -256,6 +270,7 @@ public class Grid extends GridPane {
 			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
+				nextColorTurn--;
 			}
 			if (checkFlag == false) {
 				saveState(1);
@@ -266,22 +281,30 @@ public class Grid extends GridPane {
 
 	public void OrbsEvent3(int x, int y, Player[] players) {
 		counter++;
-		System.out.println(counter - 1);
 		checkCounter(players);
+		nextColorTurn++;
+		checkClr(players);
 		if (players[counter - 1] == null) {
 			while (players[counter - 1] == null) {
 				counter++;
 				checkCounter(players);
 			}
 		}
+		System.out.println("pls see " + nextColorTurn);
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
 			saveState(1);
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
+			if (players[nextColorTurn] == null) {
+				while (players[nextColorTurn] == null) {
+					nextColorTurn++;
+					checkClr(players);
+				}
+			}
+			changeColor(players[nextColorTurn].getColor());
 			checkCounter(players);
 			this.grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-
 			gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 			gridst.grid.setowner(x, y, grid[x][y].getP());
 		} else if (grid[x][y].getOrbs() == 1) {
@@ -291,14 +314,21 @@ public class Grid extends GridPane {
 			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
+				nextColorTurn--;
 			}
 			if (checkFlag == false) {
 				animation2(x, y, players, null);
 				saveState(1);
 				this.grid[x][y].setP(players[counter - 1]);
+				if (players[nextColorTurn] == null) {
+					while (players[nextColorTurn] == null) {
+						nextColorTurn++;
+						checkClr(players);
+					}
+				}
+				changeColor(players[nextColorTurn].getColor());
 				checkCounter(players);
 				this.grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-
 				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 				gridst.grid.setowner(x, y, grid[x][y].getP());
 			}
@@ -309,14 +339,21 @@ public class Grid extends GridPane {
 			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
+				nextColorTurn--;
 			}
 			if (checkFlag == false) {
 				animation3(x, y, players, null);
 				saveState(1);
 				this.grid[x][y].setP(players[counter - 1]);
+				if (players[nextColorTurn] == null) {
+					while (players[nextColorTurn] == null) {
+						nextColorTurn++;
+						checkClr(players);
+					}
+				}
+				changeColor(players[nextColorTurn].getColor());
 				checkCounter(players);
 				this.grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
-
 				gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
 				gridst.grid.setowner(x, y, grid[x][y].getP());
 			}
@@ -327,6 +364,7 @@ public class Grid extends GridPane {
 			} catch (InvalidMoveException e) {
 				checkFlag = true;
 				counter--;
+				nextColorTurn--;
 			}
 			if (checkFlag == false) {
 				saveState(1);
@@ -337,102 +375,167 @@ public class Grid extends GridPane {
 	}
 
 	public void recursion(int x, int y, Player[] players) {
-		grid[x][y].setOrbs(0);
-		grid[x][y].setGraphic(null);
+		// grid[x][y].setOrbs(0);
+		// grid[x][y].setGraphic(null);
 		// saveState(1);
-		grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
-		grid[x][y].setP(null);
-		gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
-		gridst.grid.setowner(x, y, grid[x][y].getP());
-		Sphere s1 = new Sphere();
-		Sphere s2 = new Sphere();
-		Sphere s3 = new Sphere();
-		Sphere s4 = new Sphere();
-		PhongMaterial pm = new PhongMaterial();
-		pm.setDiffuseColor(players[counter - 1].getColor());
-
-		s1.setMaterial(pm);
-		s2.setMaterial(pm);
-		s3.setMaterial(pm);
-		s4.setMaterial(pm);
-		s1.setRadius(13);
-		s2.setRadius(13);
-		s3.setRadius(13);
-		s4.setRadius(13);
-		TranslateTransition tTransition1 = new TranslateTransition();
-		TranslateTransition tTransition2 = new TranslateTransition();
-		TranslateTransition tTransition3 = new TranslateTransition();
-		TranslateTransition tTransition4 = new TranslateTransition();
-		tTransition1.setDuration(Duration.millis(300));
-		tTransition1.setNode(s1);
-		tTransition1.setByX(-20);
-		tTransition1.setCycleCount(1);
-		tTransition1.setAutoReverse(false);
-		tTransition2.setDuration(Duration.millis(300));
-		tTransition2.setNode(s2);
-		tTransition2.setByX(20);
-		tTransition2.setCycleCount(1);
-		tTransition2.setAutoReverse(false);
-		tTransition3.setDuration(Duration.millis(300));
-		tTransition3.setNode(s3);
-		tTransition3.setByY(-20);
-		tTransition3.setCycleCount(1);
-		tTransition3.setAutoReverse(false);
-		tTransition4.setDuration(Duration.millis(300));
-		tTransition4.setNode(s4);
-		tTransition4.setByY(20);
-		tTransition2.setCycleCount(1);
-		tTransition2.setAutoReverse(false);
-		Group g = new Group();
-		if (x > 0) {
-			g.getChildren().add(s1);
-		}
-		if (x < width - 1) {
-			g.getChildren().add(s2);
-		}
-		if (y > 0) {
-			g.getChildren().add(s3);
-		}
-		if (y < height - 1) {
-			g.getChildren().add(s4);
-		}
-		ParallelTransition pt = new ParallelTransition(tTransition1, tTransition2, tTransition3, tTransition4);
-		pt.play();
-		this.grid[x][y].setGraphic(g);
-		pt.setOnFinished(e -> {
-			this.grid[x][y].setGraphic(null);
+		// grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
+		// grid[x][y].setP(null);
+		// gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+		// gridst.grid.setowner(x, y, grid[x][y].getP());
+		if (gamefinish == false) {
+			disable();
+			Sphere s1 = new Sphere();
+			Sphere s2 = new Sphere();
+			Sphere s3 = new Sphere();
+			Sphere s4 = new Sphere();
+			PhongMaterial pm = new PhongMaterial();
+			pm.setDiffuseColor(players[counter - 1].getColor());
+			s1.setMaterial(pm);
+			s2.setMaterial(pm);
+			s3.setMaterial(pm);
+			s4.setMaterial(pm);
+			s1.setRadius(13);
+			s2.setRadius(13);
+			s3.setRadius(13);
+			s4.setRadius(13);
+			TranslateTransition tTransition1 = new TranslateTransition();
+			TranslateTransition tTransition2 = new TranslateTransition();
+			TranslateTransition tTransition3 = new TranslateTransition();
+			TranslateTransition tTransition4 = new TranslateTransition();
+			tTransition1.setDuration(Duration.millis(300));
+			tTransition1.setNode(s1);
+			tTransition1.setByX(-20);
+			tTransition1.setCycleCount(1);
+			tTransition1.setAutoReverse(false);
+			tTransition2.setDuration(Duration.millis(300));
+			tTransition2.setNode(s2);
+			tTransition2.setByX(20);
+			tTransition2.setCycleCount(1);
+			tTransition2.setAutoReverse(false);
+			tTransition3.setDuration(Duration.millis(300));
+			tTransition3.setNode(s3);
+			tTransition3.setByY(-20);
+			tTransition3.setCycleCount(1);
+			tTransition3.setAutoReverse(false);
+			tTransition4.setDuration(Duration.millis(300));
+			tTransition4.setNode(s4);
+			tTransition4.setByY(20);
+			tTransition2.setCycleCount(1);
+			tTransition2.setAutoReverse(false);
+			Group g = new Group();
 			if (x > 0) {
-				place(x - 1, y, players);
-				if (grid[x - 1][y].getOrbs() > grid[x - 1][y].getCriticalMass()) {
-					recursion(x - 1, y, players);
-				}
+				g.getChildren().add(s1);
 			}
 			if (x < width - 1) {
-				place(x + 1, y, players);
-				if (grid[x + 1][y].getOrbs() > grid[x + 1][y].getCriticalMass()) {
-					recursion(x + 1, y, players);
-				}
+				g.getChildren().add(s2);
 			}
 			if (y > 0) {
-				place(x, y - 1, players);
-				if (grid[x][y - 1].getOrbs() > grid[x][y - 1].getCriticalMass()) {
-					recursion(x, y - 1, players);
-				}
+				g.getChildren().add(s3);
 			}
 			if (y < height - 1) {
-				place(x, y + 1, players);
-				if (grid[x][y + 1].getOrbs() > grid[x][y + 1].getCriticalMass()) {
-					recursion(x, y + 1, players);
-				}
+				g.getChildren().add(s4);
 			}
-			boolean gameCheck = checkPlayers(players);
-			if (gameCheck == false) {
-				if (round == false) {
-					winner = true;
-					displayWinner();
+			ParallelTransition pt = new ParallelTransition(tTransition1, tTransition2, tTransition3, tTransition4);
+			pt.statusProperty().addListener((abcd, abc, ab) -> {
+				if (ab == Animation.Status.RUNNING) {
+					disable();
 				}
-			}
-		});
+				if (ab == Animation.Status.STOPPED) {
+					enable();
+					if (players[nextColorTurn] == null) {
+						while (players[nextColorTurn] == null) {
+							nextColorTurn++;
+							checkClr(players);
+						}
+					}
+					changeColor(players[nextColorTurn].getColor());
+				}
+			});
+			pt.play();
+			this.grid[x][y].setGraphic(g);
+			pt.setOnFinished(e -> {
+				// this.grid[x][y].setGraphic(null);
+				if (gamefinish == false) {
+					int n = grid[x][y].getOrbs() - (grid[x][y].getCriticalMass());
+					if (n <= 0) {
+						grid[x][y].setOrbs(0);
+						grid[x][y].setGraphic(null);
+						grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
+						grid[x][y].setP(null);
+						gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+					}
+					if (n == 1) {
+						grid[x][y].setOrbs(1);
+						gridst.grid.setnumber(x, y, grid[x][y].getOrbs());
+						animation1(x, y, players, null);
+					}
+					boolean condition1 = false;
+					boolean condition2 = false;
+					boolean condition3 = false;
+					boolean condition4 = false;
+					if (x > 0) {
+						// System.out.println("see me");
+						place(x - 1, y, players);
+						if (grid[x - 1][y].getOrbs() == grid[x - 1][y].getCriticalMass()) {
+							condition1 = true;
+							// recursion(x - 1, y, players);
+						}
+					}
+					if (x < width - 1) {
+						place(x + 1, y, players);
+						if (grid[x + 1][y].getOrbs() == grid[x + 1][y].getCriticalMass()) {
+							condition2 = true;
+							// recursion(x + 1, y, players);
+						}
+					}
+					if (y > 0) {
+						place(x, y - 1, players);
+						if (grid[x][y - 1].getOrbs() == grid[x][y - 1].getCriticalMass()) {
+							condition3 = true;
+							// recursion(x, y - 1, players);
+						}
+					}
+					if (y < height - 1) {
+						place(x, y + 1, players);
+						if (grid[x][y + 1].getOrbs() == grid[x][y + 1].getCriticalMass()) {
+							condition4 = true;
+							// recursion(x, y + 1, players);
+						}
+					}
+					boolean gameCheck = checkPlayers(players);
+					if (gameCheck == false) {
+						if (round == false) {
+							winner = true;
+							displayWinner();
+						}
+					}
+					if (players[nextColorTurn] == null) {
+						while (players[nextColorTurn] == null) {
+							nextColorTurn++;
+							checkClr(players);
+						}
+					}
+					changeColor(players[nextColorTurn].getColor());
+					if (gamefinish == false) {
+						if (condition1 == true) {
+							recursion(x - 1, y, players);
+						}
+						if (condition2 == true) {
+							recursion(x + 1, y, players);
+						}
+						if (condition3 == true) {
+							// System.out.println("here see x and y" + x + " " +
+							// y);
+							recursion(x, y - 1, players);
+						}
+						if (condition4 == true) {
+							recursion(x, y + 1, players);
+						}
+					}
+				}
+
+			});
+		}
 	}
 
 	public void place(int x, int y, Player[] players) {
@@ -453,8 +556,21 @@ public class Grid extends GridPane {
 			animation2(x, y, players, null);
 		} else if (grid[x][y].getOrbs() == 3) {
 			animation3(x, y, players, null);
+		}
+	}
+
+	public void actionListener(int i, int j, int y, int x, Player[] players) {
+		int temp1 = i;
+		int temp2 = j;
+		if ((i == 0 && (j == 0 || j == (y - 1))) || (i == (x - 1) && (j == 0 || j == (y - 1)))) {
+			grid[i][j].setOnAction(e -> OrbsEvent1(temp1, temp2, players));
+			grid[i][j].setCriticalMass(2);
+		} else if ((i == 0 || i == (x - 1)) || (j == 0 || j == (y - 1))) {
+			grid[i][j].setOnAction(e -> OrbsEvent2(temp1, temp2, players));
+			grid[i][j].setCriticalMass(3);
 		} else {
-			animation4(x, y, players);
+			grid[i][j].setOnAction(e -> OrbsEvent3(temp1, temp2, players));
+			grid[i][j].setCriticalMass(4);
 		}
 	}
 
@@ -462,9 +578,6 @@ public class Grid extends GridPane {
 		int count = 0;
 		boolean flag = true;
 		for (int i = 0; i < players.length; i++) {
-			if (players[i] != null) {
-				// System.out.println(players[i].getCells()+"heyy");
-			}
 			if (players[i] == null) {
 				count++;
 			} else if (players[i].getCells() == 0) {
@@ -478,7 +591,6 @@ public class Grid extends GridPane {
 			flag = false;
 			for (int i = 0; i < players.length; i++) {
 				if (players[i] != null) {
-					// System.out.println("Player " + (i + 1) + " wins");
 					break;
 				}
 			}
@@ -493,12 +605,11 @@ public class Grid extends GridPane {
 		s.setTranslateX(0);
 		s.setTranslateY(0);
 		PhongMaterial pm = new PhongMaterial();
-		if (players != null)
+		if (players != null) {
 			pm.setDiffuseColor(players[counter - 1].getColor());
-
-		else
+		} else {
 			pm.setDiffuseColor(cs.getColor());
-		// changeColor(players[counter - 1].getColor());
+		}
 		s.setMaterial(pm);
 		g.getChildren().add(s);
 		RotateTransition rotateTransition = new RotateTransition();
@@ -518,7 +629,6 @@ public class Grid extends GridPane {
 			pm.setDiffuseColor(players[counter - 1].getColor());
 		else
 			pm.setDiffuseColor(cs.getColor());
-		// changeColor(pm.getDiffuseColor());
 		Sphere s = new Sphere();
 		s.setRadius(12.0);
 		s.setTranslateX(0);
@@ -578,43 +688,20 @@ public class Grid extends GridPane {
 		this.grid[x][y].setGraphic(g);
 	}
 
-	public void animation4(int x, int y, Player[] players) {
-		Group g = new Group();
-		Sphere s = new Sphere();
-		s.setRadius(13.0);
-		s.setTranslateX(-8);
-		s.setTranslateY(0);
-		Sphere t = new Sphere();
-		t.setRadius(13.0);
-		t.setTranslateX(8);
-		t.setTranslateY(0);
-		Sphere z = new Sphere();
-		z.setRadius(13.0);
-		z.setTranslateX(0);
-		z.setTranslateY(8);
-		Sphere a = new Sphere();
-		a.setRadius(13.0);
-		a.setTranslateX(0);
-		a.setTranslateY(-8);
-		PhongMaterial pm = new PhongMaterial();
-		pm.setDiffuseColor(players[counter - 1].getColor());
-		s.setMaterial(pm);
-		t.setMaterial(pm);
-		z.setMaterial(pm);
-		a.setMaterial(pm);
-		g.getChildren().add(s);
-		g.getChildren().add(z);
-		g.getChildren().add(t);
-		g.getChildren().add(a);
-		RotateTransition rotateTransition = new RotateTransition();
-		rotateTransition.setInterpolator(Interpolator.LINEAR);
-		rotateTransition.setDuration(Duration.millis(2000));
-		rotateTransition.setNode(g);
-		rotateTransition.setByAngle(360);
-		rotateTransition.setCycleCount(Timeline.INDEFINITE);
-		rotateTransition.setAutoReverse(false);
-		rotateTransition.play();
-		this.grid[x][y].setGraphic(g);
+	public void disable() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				grid[i][j].setDisable(true);
+			}
+		}
+	}
+
+	public void enable() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				grid[i][j].setDisable(false);
+			}
+		}
 	}
 
 	public void checkCounter(Player[] players) {
@@ -623,6 +710,14 @@ public class Grid extends GridPane {
 			counter = 1;
 		}
 		gridst.grid.count = counter;
+	}
+
+	public void checkClr(Player[] players) {
+
+		if (nextColorTurn >= players.length) {
+			nextColorTurn = 0;
+		}
+		 gridst.grid.turn = nextColorTurn;
 	}
 
 	public void checkMove(int x, int y, Player[] players) throws InvalidMoveException {
@@ -654,13 +749,13 @@ public class Grid extends GridPane {
 
 	public void changeColor(Color color) {
 		String col = String.valueOf(color);
-		System.out.println(col);
+		// System.out.println(col);
 		char[] arr = col.toCharArray();
 		String colore = "#";
 		for (int i = 2; i < arr.length - 2; i++) {
 			colore = colore + arr[i];
 		}
-		System.out.println(colore);
+		// System.out.println(colore);
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				grid[i][j].setStyle("-fx-border-color: " + colore + ";");
