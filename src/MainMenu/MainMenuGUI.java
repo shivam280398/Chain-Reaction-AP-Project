@@ -13,10 +13,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -26,22 +28,48 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * <h1>Main Menu GUI class</h1> The program is used to implement GUI for the
+ * main menu
+ *
+ *
+ */
 public class MainMenuGUI extends Application {
 
 	public SettingsGUI sett;
 	public MainMenuGUI mainMenu;
 	public GameGUI gameGUI;
 
+	/**
+	 * This method is used as the main menu initialization method.
+	 * 
+	 * @param mainStage
+	 *            mainStage of GUI
+	 */
 	@Override
 	public void start(Stage mainStage) throws Exception {
 		mainMenu = new MainMenuGUI();
 		mainMenu.initMain(mainStage);
 	}
 
+	/**
+	 * This method is used to launch the GUI for Game Class.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
 
+	/**
+	 * This method is used to set the main stage by adding buttons for setting,to
+	 * play game etc,in various panes available in java fx like border,anchor and
+	 * various functionalities are added to these buttons.
+	 * 
+	 * @param stage
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public void initMain(Stage stage) throws ClassNotFoundException, IOException {
 
 		BorderPane root = new BorderPane();
@@ -80,10 +108,17 @@ public class MainMenuGUI extends Application {
 
 		settingsBtn.setOnMouseClicked(event -> {
 			try {
-				sett = new SettingsGUI(noOfPlayerstf.getText(), stage);
-				sett.start(new Stage());
-				// stage.close();
-				stage.hide();
+				if (noOfPlayerstf.getText().equals("")) {
+					Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Invalid start");
+					alert.setHeaderText("Please select number of players");
+					alert.setContentText("Select Again");
+				} else {
+					sett = new SettingsGUI(noOfPlayerstf.getText(), stage);
+					sett.start(new Stage());
+					// stage.close();
+					stage.hide();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -91,6 +126,12 @@ public class MainMenuGUI extends Application {
 
 		playGameBtn.setOnMouseClicked(event -> {
 			try {
+				// if(noOfPlayerstf.getText().equals("")) {
+				// Alert alert = new Alert(AlertType.WARNING);
+				// alert.setTitle("Invalid start");
+				// alert.setHeaderText("Please select number of players");
+				// alert.setContentText("Select Again");
+				// }
 				if (!noOfPlayerstf.getText().equals("") && gridSizeBox.getValue() != null) {
 
 					gameGUI = new GameGUI((String) gridSizeBox.getValue(), noOfPlayerstf.getText(), sett);
@@ -120,12 +161,11 @@ public class MainMenuGUI extends Application {
 		quitBtn.setOnMouseClicked(event -> {
 			stage.close();
 		});
-		
+
 		playGameBtn.setMinWidth(120);
 		settingsBtn.setMinWidth(120);
 		quitBtn.setMinWidth(120);
 		resumeBtn.setMinWidth(120);
-
 		hbox.getChildren().addAll(noOfPlayers, noOfPlayerstf, gridSizet, gridSizeBox);
 		if (gsresume.grid.winner == false) {
 
