@@ -1,7 +1,12 @@
 package Game;
 
+/**
+ * <h1>Main Menu GUI class</h1> The program is used to play the game.
+ *
+ */
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 import MainMenu.MainMenuGUI;
 import Settings.Player;
@@ -28,12 +33,22 @@ import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class is there to threw an exception if a player attempts an invalid
+ * move .
+ *
+ */
 class InvalidMoveException extends Exception {
 	InvalidMoveException(String msg) {
 		super(msg);
 	}
 }
 
+/**
+ * This is the grid class which extends grid pane. It is used to make grid in
+ * which game is to be played. Moreover the game is played in this class only.
+ *
+ */
 public class Grid extends GridPane {
 	public Cell[][] grid;
 	public GameGUIStatus gridst;
@@ -47,6 +62,19 @@ public class Grid extends GridPane {
 	int nextColorTurn = 0;
 	public GameGUIStatus gsundo = null;
 
+	/**
+	 * This is the constructor for Grid class. In it we initialize grid with an 2D
+	 * array of cells.
+	 * 
+	 * @param x
+	 *            width of the grid.
+	 * @param y
+	 *            height of the grid.
+	 * @param players
+	 *            array of players playing the game.
+	 * @param count
+	 *            integer for passing turn to players
+	 */
 	public Grid(int x, int y, Player[] players, int count) {
 		super();
 		counter = count;
@@ -77,6 +105,15 @@ public class Grid extends GridPane {
 
 	}
 
+	/**
+	 * This Constructor of grid is used during undo and resume.
+	 * 
+	 * @param _grid
+	 *            Object of GridStatus class which stores status of grid at any
+	 *            point of time.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public Grid(GridStatus _grid, Player[] players) {
 		super();
 		this.height = _grid.width;
@@ -159,6 +196,17 @@ public class Grid extends GridPane {
 		this.width = width;
 	}
 
+	/**
+	 * This function handles click on cells with critical mass as 2. Do so by
+	 * placing an orb or by splitting it.
+	 * 
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public void OrbsEvent1(int x, int y, Player[] players) {
 		counter++;
 		checkCounter(players);
@@ -203,6 +251,17 @@ public class Grid extends GridPane {
 		}
 	}
 
+	/**
+	 * This function handles click on cells with critical mass as 3. Do so by
+	 * placing orbs or by splitting them.
+	 * 
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public void OrbsEvent2(int x, int y, Player[] players) {
 		counter++;
 		checkCounter(players);
@@ -270,6 +329,18 @@ public class Grid extends GridPane {
 			}
 		}
 	}
+
+	/**
+	 * This function handles click on cells with critical mass as 4. Do so by
+	 * placing orbs or by splitting them.
+	 * 
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 
 	public void OrbsEvent3(int x, int y, Player[] players) {
 		counter++;
@@ -365,6 +436,18 @@ public class Grid extends GridPane {
 
 	}
 
+	/**
+	 * This function handles the splitting of orbs.Its an recursive algorithm which
+	 * splits orbs and then recursively calls itself at places where new orbs have
+	 * been placed if there is a chance of splitting there also.
+	 * It is also responsible for transition animation while splitting of orbs.
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public void recursion(int x, int y, Player[] players) {
 		if (winner == false) {
 			disable();
@@ -514,6 +597,14 @@ public class Grid extends GridPane {
 		}
 	}
 
+	/**This function places an atom of the player whom is in turn at that point of time
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public void place(int x, int y, Player[] players) {
 		if (grid[x][y].getP() != null) {
 			grid[x][y].getP().setCells(grid[x][y].getP().getCells() - 1);
@@ -531,7 +622,20 @@ public class Grid extends GridPane {
 			animation3(x, y, players, null);
 		}
 	}
-
+	/**
+	 * This function attaches action listener to a cell present in the grid.
+	 * This function is called for every cell of the grid.
+	 * @param i
+	 * 		coordinate along the x axis of the cell.
+	 * @param j
+	 * 		coordinate along the y axis of the cell.
+	 * @param y
+	 * 		height of the grid.
+	 * @param x
+	 * 		width of the grid.
+	 * @param players
+	 * 		 array of players playing the game.
+	 */
 	public void actionListener(int i, int j, int y, int x, Player[] players) {
 		int temp1 = i;
 		int temp2 = j;
@@ -546,7 +650,15 @@ public class Grid extends GridPane {
 			grid[i][j].setCriticalMass(4);
 		}
 	}
-
+	/**
+	 * This function check and eliminate players.
+	 * It also conveys the message containing information that game is finished or not
+	 * through returning a boolean value.
+	 * @param players
+	 * 	 	array of players playing the game.
+	 * @return flag	
+	 * 		boolean value,tells whether game is finished or not.
+	 */
 	public boolean checkPlayers(Player[] players) {
 		int count = 0;
 		boolean flag = true;
@@ -570,6 +682,16 @@ public class Grid extends GridPane {
 		}
 		return flag;
 	}
+	/**
+	 * This function is responsible for animation on a group of single orb.
+	 * 
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 
 	public void animation1(int x, int y, Player[] players, Player cs) {
 		Group g = new Group();
@@ -594,7 +716,16 @@ public class Grid extends GridPane {
 		rotateTransition.play();
 		this.grid[x][y].setGraphic(g);
 	}
-
+	/**
+	 * This function is responsible for animation on a group of 2 orbs.
+	 * 
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public void animation2(int x, int y, Player[] players, Player cs) {
 		Group g = new Group();
 		PhongMaterial pm = new PhongMaterial();
@@ -624,7 +755,16 @@ public class Grid extends GridPane {
 		rotateTransition.play();
 		this.grid[x][y].setGraphic(g);
 	}
-
+	/**
+	 * This function is responsible for animation on a group of three orbs.
+	 * 
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
 	public void animation3(int x, int y, Player[] players, Player cs) {
 		Group g = new Group();
 		Sphere s = new Sphere();
@@ -660,7 +800,11 @@ public class Grid extends GridPane {
 		rotateTransition.play();
 		this.grid[x][y].setGraphic(g);
 	}
-
+	/**
+	 * This function disables click on the grid.Used while transition animation
+	 * is been played.
+	 */
+	
 	public void disable() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -668,7 +812,10 @@ public class Grid extends GridPane {
 			}
 		}
 	}
-
+	/**
+	 * This function is used to enable click on the grid after transition animation
+	 * is completed.
+	 */
 	public void enable() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -676,6 +823,14 @@ public class Grid extends GridPane {
 			}
 		}
 	}
+	/**This function deals with the counter which is responsible
+	 * for turn of each player.
+	 * It changes the counter to point to the first player after the turn
+	 * of last player.
+	 * 
+	 * @param players
+	 * 			array of players playing the game.
+	 */
 
 	public void checkCounter(Player[] players) {
 
@@ -684,6 +839,13 @@ public class Grid extends GridPane {
 		}
 		gridst.grid.count = counter;
 	}
+	/**This function deals with the nextColorTurn which is responsible
+	 * for changing the color of the grid to the color of the player
+	 * who has the turn.
+	 * It changes the nextColorTurn to point to the first player after turn of the last.
+	 * @param players
+	 * 			array of players playing the game.
+	 */
 
 	public void checkClr(Player[] players) {
 
@@ -692,13 +854,28 @@ public class Grid extends GridPane {
 		}
 		gridst.grid.turn = nextColorTurn;
 	}
-
+	/**
+	 * This function checks for invalid move and throws InvalidMoveException.
+	 * It does so by checking the current player assigned to the orb
+	 * and comparing it with the player in turn.
+	 * @param x
+	 *            coordinate of cell along the x axis.
+	 * @param y
+	 *            coordinate of cell along the y axis.
+	 * @param players
+	 *            array of players playing the game.
+	 */
+	
 	public void checkMove(int x, int y, Player[] players) throws InvalidMoveException {
 		if (!grid[x][y].getP().equals(players[counter - 1])) {
 			throw new InvalidMoveException("exception");
 		}
 	}
-
+	/**
+	 * This function saves state of grid after each turn.
+	 * @param i
+	 * @return
+	 */
 	public GameGUIStatus saveState(int i) {
 		if (i == 1) {
 			gridundo = gridst;
@@ -715,11 +892,21 @@ public class Grid extends GridPane {
 		}
 		return gsundo;
 	}
-
-	public GameGUIStatus ss() {
+	/**
+	 * This function returns object of gridStatus class.
+	 * It is used in undo functionality.
+	 * @return gsundo
+	 * 		object of the gridStatus class.
+	 */
+	public GameGUIStatus ReturnUndo() {
 		return gsundo;
 	}
-
+	/**This function changes the color of the grid.
+	 * It is passed with color as the parameter with help of
+	 * nextColorTurn and then through traversing in the grid,color is changed.
+	 * 
+	 * @param color
+	 */
 	public void changeColor(Color color) {
 		String col = String.valueOf(color);
 		char[] arr = col.toCharArray();
@@ -733,10 +920,13 @@ public class Grid extends GridPane {
 			}
 		}
 	}
-
+	/**This function is responsible for showing an alert
+	 * displaying the winner and it also helps in stopping all the
+	 * redundant recursive calls after game is finsihed by changing a flag.
+	 * 
+	 */
 	public void displayWinner() {
 		round = true;
-		System.out.println("hgh" + counter);
 		winner = true;
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Game Ends");
