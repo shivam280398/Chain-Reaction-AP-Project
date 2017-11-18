@@ -75,11 +75,11 @@ public class GameGUI extends Application {
 			clr[0] = Color.RED;
 			clr[1] = Color.GREEN;
 			clr[2] = Color.BLUE;
-			clr[3] = Color.YELLOW;
+			clr[3] = Color.GOLD;
 			clr[4] = Color.VIOLET;
-			clr[5] = Color.CRIMSON;
+			clr[5] = Color.SILVER;
 			clr[6] = Color.PINK;
-			clr[7] = Color.YELLOWGREEN;
+			clr[7] = Color.FIREBRICK;
 			for (int i = 0; i < noOfplayers; i++) {
 				players[i] = new Player(clr[i]);
 			}
@@ -191,9 +191,9 @@ public class GameGUI extends Application {
 	public void start(Stage mainStage) throws Exception {
 
 		mainStage.setTitle("Chain Reaction");
-		Player[] copy = new Player[players.length];
-		for (int i = 0; i < copy.length; i++) {
-			copy[i] = players[i];
+		Player[] playerCopy = new Player[players.length];
+		for (int i = 0; i < playerCopy.length; i++) {
+			playerCopy[i] = players[i];
 		}
 		HBox hbox = new HBox(5);
 		Button undoBtn = new Button("UNDO");
@@ -221,7 +221,7 @@ public class GameGUI extends Application {
 		m1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Grid gNew = new Grid(m, n, copy, 0);
+				Grid gNew = new Grid(m, n, playerCopy, 0);
 				root.setCenter(gNew);
 			}
 		});

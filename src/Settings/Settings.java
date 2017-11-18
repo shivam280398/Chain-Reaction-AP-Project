@@ -31,11 +31,11 @@ public class Settings implements Serializable {
 		clr[0] = Color.RED;
 		clr[1] = Color.GREEN;
 		clr[2] = Color.BLUE;
-		clr[3] = Color.YELLOW;
+		clr[3] = Color.GOLD;
 		clr[4] = Color.VIOLET;
-		clr[5] = Color.CRIMSON;
+		clr[5] = Color.SILVER;
 		clr[6] = Color.PINK;
-		clr[7] = Color.YELLOWGREEN;
+		clr[7] = Color.FIREBRICK;
 		for (int i = 0; i < noOfPlayers; i++) {
 			players[i] = new Player(clr[i]);
 		}
@@ -63,6 +63,11 @@ public class Settings implements Serializable {
 
 }
 
+/**
+ * This class throws an exception if a player selects an already
+ * Chosen color .
+ *
+ */
 class ColorNotValidException extends Exception {
 	public ColorNotValidException(String message) {
 		super(message);

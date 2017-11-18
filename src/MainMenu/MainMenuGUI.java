@@ -8,6 +8,7 @@ import Settings.Player;
 import Settings.SettingsGUI;
 import Status.GameGUIStatus;
 import Status.GridStatus;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,6 +28,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * <h1>Main Menu GUI class</h1> The program is used to implement GUI for the
@@ -46,10 +48,8 @@ public class MainMenuGUI extends Application {
 	 * @param mainStage
 	 *            mainStage of GUI
 	 */
-	@Override
 	public void start(Stage mainStage) throws Exception {
-		mainMenu = new MainMenuGUI();
-		mainMenu.initMain(mainStage);
+		initMain(mainStage);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class MainMenuGUI extends Application {
 		Button quitBtn = new Button("QUIT");
 		Button resumeBtn = new Button("RESUME");
 
-		Text noOfPlayers = new Text("No Of Players");
+		Text noOfPlayers = new Text("No Of Players(2 to 8)");
 		noOfPlayers.setId("noOfP");
 		noOfPlayers.setFill(Color.WHITE);
 		TextField noOfPlayerstf = new TextField();
@@ -108,15 +108,26 @@ public class MainMenuGUI extends Application {
 
 		settingsBtn.setOnMouseClicked(event -> {
 			try {
-				if (noOfPlayerstf.getText().equals("")) {
+				if (noOfPlayerstf.getText().equals("") || Integer.parseInt(noOfPlayerstf.getText())>8 || Integer.parseInt(noOfPlayerstf.getText())<=1) {
 					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Invalid start");
-					alert.setHeaderText("Please select number of players");
+					alert.setTitle("Invalid Input");
+					alert.setHeaderText("Please select number of players again");
 					alert.setContentText("Select Again");
+					alert.setOnHidden(evt -> {
+						stage.close();
+						try {
+							start(new Stage());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					});
+					alert.show();
+					
+					
 				} else {
 					sett = new SettingsGUI(noOfPlayerstf.getText(), stage);
 					sett.start(new Stage());
-					// stage.close();
 					stage.hide();
 				}
 			} catch (Exception e) {
@@ -126,13 +137,23 @@ public class MainMenuGUI extends Application {
 
 		playGameBtn.setOnMouseClicked(event -> {
 			try {
-				// if(noOfPlayerstf.getText().equals("")) {
-				// Alert alert = new Alert(AlertType.WARNING);
-				// alert.setTitle("Invalid start");
-				// alert.setHeaderText("Please select number of players");
-				// alert.setContentText("Select Again");
-				// }
-				if (!noOfPlayerstf.getText().equals("") && gridSizeBox.getValue() != null) {
+				if (noOfPlayerstf.getText().equals("") || Integer.parseInt(noOfPlayerstf.getText())>8 || Integer.parseInt(noOfPlayerstf.getText())<=1) {
+					Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Invalid Input");
+					alert.setHeaderText("Please select number of players again");
+					alert.setContentText("Select Again");
+					alert.setOnHidden(evt -> {
+						stage.close();
+						try {
+							start(new Stage());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					});
+					alert.show();
+				}
+				else if (!noOfPlayerstf.getText().equals("") && gridSizeBox.getValue() != null) {
 
 					gameGUI = new GameGUI((String) gridSizeBox.getValue(), noOfPlayerstf.getText(), sett);
 					gameGUI.start(new Stage());

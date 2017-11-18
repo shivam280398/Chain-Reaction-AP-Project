@@ -148,7 +148,6 @@ public class SettingsGUI extends Application {
 
 			@Override
 			public void handle(MouseEvent event) {
-				System.out.println("clicked on " + settingsListView.getSelectionModel().getSelectedItem());
 				int index = settingsListView.getSelectionModel().getSelectedIndex();
 				if (index < noOfplayers) {
 					colorPicker(setting.players[index], mainStage,index);
@@ -212,11 +211,7 @@ public class SettingsGUI extends Application {
 			public void handle(MouseEvent t) {
 				Boolean colorValid = true;
 				Color colorID = colorPicker.getValue();
-				System.out.println(colorID);
 				String obcolor = String.valueOf(colorID);
-				System.out.println(obcolor);
-				System.out.println(Color.valueOf(obcolor));
-				
 				try{
 					setting.isColorValid(colorID,index);
 				}

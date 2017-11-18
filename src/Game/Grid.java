@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * This class is there to threw an exception if a player attempts an invalid
+ * This class throws an exception if a player attempts an invalid
  * move .
  *
  */
@@ -942,7 +942,7 @@ public class Grid extends GridPane {
 	/**
 	 * This function is responsible for showing an alert displaying the winner
 	 * and it also helps in stopping all the redundant recursive calls after
-	 * game is finsihed by changing a flag.
+	 * game is finished by changing a flag.
 	 * 
 	 */
 	public void displayWinner() {
