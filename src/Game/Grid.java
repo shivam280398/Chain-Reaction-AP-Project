@@ -63,8 +63,8 @@ public class Grid extends GridPane {
 	public GameGUIStatus gsundo = null;
 
 	/**
-	 * This is the constructor for Grid class. In it we initialize grid with an 2D
-	 * array of cells.
+	 * This is the constructor for Grid class. In it we initialize grid with an
+	 * 2D array of cells.
 	 * 
 	 * @param x
 	 *            width of the grid.
@@ -120,8 +120,6 @@ public class Grid extends GridPane {
 		this.width = _grid.height;
 		int y = height;
 		int x = width;
-		_grid.print();
-
 		counter = _grid.count;
 		nextColorTurn = _grid.count;
 		int tr = counter;
@@ -220,7 +218,7 @@ public class Grid extends GridPane {
 		}
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
-			saveState(1);
+			saveState();
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
 			if (players[nextColorTurn] == null) {
@@ -245,7 +243,7 @@ public class Grid extends GridPane {
 				nextColorTurn--;
 			}
 			if (checkFlag == false) {
-				saveState(1);
+				saveState();
 				recursion(x, y, players);
 			}
 		}
@@ -275,7 +273,7 @@ public class Grid extends GridPane {
 		}
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
-			saveState(1);
+			saveState();
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
 			if (players[nextColorTurn] == null) {
@@ -299,7 +297,7 @@ public class Grid extends GridPane {
 				nextColorTurn--;
 			}
 			if (checkFlag == false) {
-				saveState(1);
+				saveState();
 				grid[x][y].setOrbs(grid[x][y].getOrbs() + 1);
 				if (players[nextColorTurn] == null) {
 					while (players[nextColorTurn] == null) {
@@ -324,7 +322,7 @@ public class Grid extends GridPane {
 				nextColorTurn--;
 			}
 			if (checkFlag == false) {
-				saveState(1);
+				saveState();
 				recursion(x, y, players);
 			}
 		}
@@ -355,7 +353,7 @@ public class Grid extends GridPane {
 		}
 		if (grid[x][y].getOrbs() == 0) {
 			animation1(x, y, players, null);
-			saveState(1);
+			saveState();
 			players[counter - 1].setCells(players[counter - 1].getCells() + 1);
 			this.grid[x][y].setP(players[counter - 1]);
 			if (players[nextColorTurn] == null) {
@@ -380,7 +378,7 @@ public class Grid extends GridPane {
 			}
 			if (checkFlag == false) {
 				animation2(x, y, players, null);
-				saveState(1);
+				saveState();
 				this.grid[x][y].setP(players[counter - 1]);
 				if (players[nextColorTurn] == null) {
 					while (players[nextColorTurn] == null) {
@@ -405,7 +403,7 @@ public class Grid extends GridPane {
 			}
 			if (checkFlag == false) {
 				animation3(x, y, players, null);
-				saveState(1);
+				saveState();
 				this.grid[x][y].setP(players[counter - 1]);
 				if (players[nextColorTurn] == null) {
 					while (players[nextColorTurn] == null) {
@@ -429,7 +427,7 @@ public class Grid extends GridPane {
 				nextColorTurn--;
 			}
 			if (checkFlag == false) {
-				saveState(1);
+				saveState();
 				recursion(x, y, players);
 			}
 		}
@@ -437,10 +435,11 @@ public class Grid extends GridPane {
 	}
 
 	/**
-	 * This function handles the splitting of orbs.Its an recursive algorithm which
-	 * splits orbs and then recursively calls itself at places where new orbs have
-	 * been placed if there is a chance of splitting there also.
-	 * It is also responsible for transition animation while splitting of orbs.
+	 * This function handles the splitting of orbs.Its an recursive algorithm
+	 * which splits orbs and then recursively calls itself at places where new
+	 * orbs have been placed if there is a chance of splitting there also. It is
+	 * also responsible for transition animation while splitting of orbs.
+	 * 
 	 * @param x
 	 *            coordinate of cell along the x axis.
 	 * @param y
@@ -597,7 +596,10 @@ public class Grid extends GridPane {
 		}
 	}
 
-	/**This function places an atom of the player whom is in turn at that point of time
+	/**
+	 * This function places an atom of the player whom is in turn at that point
+	 * of time
+	 * 
 	 * @param x
 	 *            coordinate of cell along the x axis.
 	 * @param y
@@ -622,19 +624,21 @@ public class Grid extends GridPane {
 			animation3(x, y, players, null);
 		}
 	}
+
 	/**
 	 * This function attaches action listener to a cell present in the grid.
 	 * This function is called for every cell of the grid.
+	 * 
 	 * @param i
-	 * 		coordinate along the x axis of the cell.
+	 *            coordinate along the x axis of the cell.
 	 * @param j
-	 * 		coordinate along the y axis of the cell.
+	 *            coordinate along the y axis of the cell.
 	 * @param y
-	 * 		height of the grid.
+	 *            height of the grid.
 	 * @param x
-	 * 		width of the grid.
+	 *            width of the grid.
 	 * @param players
-	 * 		 array of players playing the game.
+	 *            array of players playing the game.
 	 */
 	public void actionListener(int i, int j, int y, int x, Player[] players) {
 		int temp1 = i;
@@ -650,14 +654,15 @@ public class Grid extends GridPane {
 			grid[i][j].setCriticalMass(4);
 		}
 	}
+
 	/**
-	 * This function check and eliminate players.
-	 * It also conveys the message containing information that game is finished or not
-	 * through returning a boolean value.
+	 * This function check and eliminate players. It also conveys the message
+	 * containing information that game is finished or not through returning a
+	 * boolean value.
+	 * 
 	 * @param players
-	 * 	 	array of players playing the game.
-	 * @return flag	
-	 * 		boolean value,tells whether game is finished or not.
+	 *            array of players playing the game.
+	 * @return flag boolean value,tells whether game is finished or not.
 	 */
 	public boolean checkPlayers(Player[] players) {
 		int count = 0;
@@ -682,6 +687,7 @@ public class Grid extends GridPane {
 		}
 		return flag;
 	}
+
 	/**
 	 * This function is responsible for animation on a group of single orb.
 	 * 
@@ -716,6 +722,7 @@ public class Grid extends GridPane {
 		rotateTransition.play();
 		this.grid[x][y].setGraphic(g);
 	}
+
 	/**
 	 * This function is responsible for animation on a group of 2 orbs.
 	 * 
@@ -755,6 +762,7 @@ public class Grid extends GridPane {
 		rotateTransition.play();
 		this.grid[x][y].setGraphic(g);
 	}
+
 	/**
 	 * This function is responsible for animation on a group of three orbs.
 	 * 
@@ -800,11 +808,12 @@ public class Grid extends GridPane {
 		rotateTransition.play();
 		this.grid[x][y].setGraphic(g);
 	}
+
 	/**
 	 * This function disables click on the grid.Used while transition animation
 	 * is been played.
 	 */
-	
+
 	public void disable() {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -812,9 +821,10 @@ public class Grid extends GridPane {
 			}
 		}
 	}
+
 	/**
-	 * This function is used to enable click on the grid after transition animation
-	 * is completed.
+	 * This function is used to enable click on the grid after transition
+	 * animation is completed.
 	 */
 	public void enable() {
 		for (int i = 0; i < width; i++) {
@@ -823,13 +833,14 @@ public class Grid extends GridPane {
 			}
 		}
 	}
-	/**This function deals with the counter which is responsible
-	 * for turn of each player.
-	 * It changes the counter to point to the first player after the turn
-	 * of last player.
+
+	/**
+	 * This function deals with the counter which is responsible for turn of
+	 * each player. It changes the counter to point to the first player after
+	 * the turn of last player.
 	 * 
 	 * @param players
-	 * 			array of players playing the game.
+	 *            array of players playing the game.
 	 */
 
 	public void checkCounter(Player[] players) {
@@ -839,12 +850,15 @@ public class Grid extends GridPane {
 		}
 		gridst.grid.count = counter;
 	}
-	/**This function deals with the nextColorTurn which is responsible
-	 * for changing the color of the grid to the color of the player
-	 * who has the turn.
-	 * It changes the nextColorTurn to point to the first player after turn of the last.
+
+	/**
+	 * This function deals with the nextColorTurn which is responsible for
+	 * changing the color of the grid to the color of the player who has the
+	 * turn. It changes the nextColorTurn to point to the first player after
+	 * turn of the last.
+	 * 
 	 * @param players
-	 * 			array of players playing the game.
+	 *            array of players playing the game.
 	 */
 
 	public void checkClr(Player[] players) {
@@ -854,10 +868,12 @@ public class Grid extends GridPane {
 		}
 		gridst.grid.turn = nextColorTurn;
 	}
+
 	/**
-	 * This function checks for invalid move and throws InvalidMoveException.
-	 * It does so by checking the current player assigned to the orb
-	 * and comparing it with the player in turn.
+	 * This function checks for invalid move and throws InvalidMoveException. It
+	 * does so by checking the current player assigned to the orb and comparing
+	 * it with the player in turn.
+	 * 
 	 * @param x
 	 *            coordinate of cell along the x axis.
 	 * @param y
@@ -865,21 +881,20 @@ public class Grid extends GridPane {
 	 * @param players
 	 *            array of players playing the game.
 	 */
-	
+
 	public void checkMove(int x, int y, Player[] players) throws InvalidMoveException {
 		if (!grid[x][y].getP().equals(players[counter - 1])) {
 			throw new InvalidMoveException("exception");
 		}
 	}
+
 	/**
 	 * This function saves state of grid after each turn.
-	 * @param i
-	 * @return
+	 * 
+	 * @return GameGUIStatus object to store Game Status
 	 */
-	public GameGUIStatus saveState(int i) {
-		if (i == 1) {
-			gridundo = gridst;
-		}
+	public GameGUIStatus saveState() {
+		gridundo = gridst;
 		try {
 			GameGUIStatus.serialize("GameUndo", gridundo);
 			try {
@@ -892,18 +907,21 @@ public class Grid extends GridPane {
 		}
 		return gsundo;
 	}
+
 	/**
-	 * This function returns object of gridStatus class.
-	 * It is used in undo functionality.
-	 * @return gsundo
-	 * 		object of the gridStatus class.
+	 * This function returns object of gridStatus class. It is used in undo
+	 * functionality.
+	 * 
+	 * @return gsundo object of the gridStatus class.
 	 */
 	public GameGUIStatus ReturnUndo() {
 		return gsundo;
 	}
-	/**This function changes the color of the grid.
-	 * It is passed with color as the parameter with help of
-	 * nextColorTurn and then through traversing in the grid,color is changed.
+
+	/**
+	 * This function changes the color of the grid. It is passed with color as
+	 * the parameter with help of nextColorTurn and then through traversing in
+	 * the grid,color is changed.
 	 * 
 	 * @param color
 	 */
@@ -920,9 +938,11 @@ public class Grid extends GridPane {
 			}
 		}
 	}
-	/**This function is responsible for showing an alert
-	 * displaying the winner and it also helps in stopping all the
-	 * redundant recursive calls after game is finsihed by changing a flag.
+
+	/**
+	 * This function is responsible for showing an alert displaying the winner
+	 * and it also helps in stopping all the redundant recursive calls after
+	 * game is finsihed by changing a flag.
 	 * 
 	 */
 	public void displayWinner() {

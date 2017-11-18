@@ -36,9 +36,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 /**
- * <h1>Game GUI class</h1> The program is used to implement GUI
- * for the grid.
+ * <h1>Game GUI class</h1> The program is used to implement GUI for the grid.
  *
  *
  */
@@ -51,15 +51,16 @@ public class GameGUI extends Application {
 	public SettingsGUI setting;
 	public int count;
 	int m = 0, n = 0;
+
 	/**
 	 * This constructor is used to initialize the grid of the game.
 	 * 
 	 * @param c
-	 *           size of the grid.
+	 *            size of the grid.
 	 * @param _n
-	 * 			number of players.
+	 *            number of players.
 	 * @param _setting
-	 * 			setting class of the game.
+	 *            setting class of the game.
 	 */
 	public GameGUI(String c, String _n, SettingsGUI _setting) {
 
@@ -82,7 +83,7 @@ public class GameGUI extends Application {
 			for (int i = 0; i < noOfplayers; i++) {
 				players[i] = new Player(clr[i]);
 			}
-	}
+		}
 		count = 0;
 		if (size.equals("9X6")) {
 			m = 6;
@@ -94,21 +95,22 @@ public class GameGUI extends Application {
 		grid = new Grid(m, n, players, count);
 
 	}
+
 	/**
-	 * This constructor is used to initialize the grid of the game
-	 * for undo and resume functionality.
+	 * This constructor is used to initialize the grid of the game for undo and
+	 * resume functionality.
 	 * 
 	 * @param _size
-	 *           size of the grid.
+	 *            size of the grid.
 	 * @param _n
-	 * 			number of players.
+	 *            number of players.
 	 * @param plist
-	 * 			array containing players.
+	 *            array containing players.
 	 * @param turn
-	 * 			integer having the turn stored as a number.
+	 *            integer having the turn stored as a number.
 	 * @param _grid
-	 * 			Object of the class of gridStatus which stores
-	 * 			status of grid at any point of time.
+	 *            Object of the class of gridStatus which stores status of grid
+	 *            at any point of time.
 	 */
 	public GameGUI(String _size, int _n, Player[] plist, int turn, GridStatus _grid) {
 
@@ -125,16 +127,17 @@ public class GameGUI extends Application {
 			n = 15;
 		}
 	}
+
 	/**
-	 * This method is used to get the number of players
-	 * playing the game.
-	 * @return noOfplayers
-	 * 			players playing the game.
+	 * This method is used to get the number of players playing the game.
+	 * 
+	 * @return noOfplayers players playing the game.
 	 * 
 	 */
 	public int getNoOfplayers() {
 		return noOfplayers;
 	}
+
 	/**
 	 * This method is used to assign number of players.
 	 * 
@@ -144,15 +147,17 @@ public class GameGUI extends Application {
 	public void setNoOfplayers(int noOfplayers) {
 		this.noOfplayers = noOfplayers;
 	}
+
 	/**
 	 * This method is used to get the size of the grid.
-	 * @return size
-	 * 			size of the game.
+	 * 
+	 * @return size size of the game.
 	 * 
 	 */
 	public String getSize() {
 		return size;
 	}
+
 	/**
 	 * This method is used to assign size to the grid.
 	 * 
@@ -162,8 +167,9 @@ public class GameGUI extends Application {
 	public void setSize(String size) {
 		this.size = size;
 	}
+
 	/**
-	 * This method is used to launch the GUI for Game Class. 
+	 * This method is used to launch the GUI for Game Class.
 	 * 
 	 * @param args
 	 */
@@ -172,19 +178,22 @@ public class GameGUI extends Application {
 		launch(args);
 
 	}
+
 	/**
-	 * This method is used as the application initialization method. This method is called immediately after 
-	 * the Application class is loaded and constructed. 
+	 * This method is used as the application initialization method. This method
+	 * is called immediately after the Application class is loaded and
+	 * constructed.
 	 * 
-	 * @param mainStage mainStage of GUI
+	 * @param mainStage
+	 *            mainStage of GUI
 	 */
 	@Override
 	public void start(Stage mainStage) throws Exception {
 
 		mainStage.setTitle("Chain Reaction");
-		Player[] copy=new Player[players.length];
-		for(int i=0;i<copy.length;i++) {
-			copy[i]=players[i];
+		Player[] copy = new Player[players.length];
+		for (int i = 0; i < copy.length; i++) {
+			copy[i] = players[i];
 		}
 		HBox hbox = new HBox(5);
 		Button undoBtn = new Button("UNDO");
@@ -200,15 +209,15 @@ public class GameGUI extends Application {
 			hbox.setPadding(new Insets(10, 0, 5, 180));
 		else
 			hbox.setPadding(new Insets(10, 0, 5, 250));
-		
+
 		BorderPane root = new BorderPane();
 		Scene mainScene = new Scene(root);
 		mainStage.setScene(mainScene);
 		mainScene.getStylesheets().add(getClass().getResource("/assets/stylesheetGame.css").toExternalForm());
-		
+
 		root.setTop(hbox);
 		root.setCenter(grid);
-		
+
 		m1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -217,19 +226,15 @@ public class GameGUI extends Application {
 			}
 		});
 		GameGUIStatus gs = new GameGUIStatus(noOfplayers, grid.gridst.players, size, grid.gridst.grid);
-			
+
 		m2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				mainStage.close();
 				try {
-					
-					grid.gridst.grid.print();
 					gs.grid = grid.gridst.grid;
 					gs.players = grid.gridst.players;
-					gs.grid.print();
 					gs.grid.winner = grid.winner;
-					System.out.println(grid.winner);
 					GameGUIStatus.serialize("GamePlay", gs);
 					new MainMenuGUI().start(new Stage());
 				} catch (Exception e) {
@@ -238,30 +243,26 @@ public class GameGUI extends Application {
 				}
 			}
 		});
-		
+
 		mainStage.setOnCloseRequest(event -> {
-				try {
-					grid.gridst.grid.print();
-					gs.grid = grid.gridst.grid;
-					gs.players = grid.gridst.players;
-					gs.grid.print();
-					gs.grid.winner = grid.winner;
-					System.out.println(grid.winner);
-					GameGUIStatus.serialize("GamePlay", gs);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			});
-		
-		
+			try {
+				grid.gridst.grid.print();
+				gs.grid = grid.gridst.grid;
+				gs.players = grid.gridst.players;
+				gs.grid.winner = grid.winner;
+				GameGUIStatus.serialize("GamePlay", gs);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 
 		undoBtn.setOnMouseClicked(event -> {
 			try {
-				GameGUIStatus gsundo = grid.ss();
+				GameGUIStatus gsundo = grid.ReturnUndo();
 				gsundo.grid.count -= 1;
 				grid = new Grid(gsundo.grid, gsundo.players);
 				grid.gridst = gsundo;
@@ -274,8 +275,5 @@ public class GameGUI extends Application {
 		boolean check = true;
 		mainStage.show();
 	}
-	
 
 }
-
-

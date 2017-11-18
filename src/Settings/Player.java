@@ -31,7 +31,6 @@ public class Player implements Serializable {
 	 * 
 	 * @param _colorID
 	 *            This is the colorID of the player's orbs in the game.
-	 * @return none
 	 */
 	public Player(Color _colorID) {
 		Color obcolor = _colorID;
@@ -62,7 +61,6 @@ public class Player implements Serializable {
 	/**
 	 * This method is used to get the colorID of orbs of the player in the grid.
 	 * 
-	 * @param none
 	 * @return Color ColorID of orbs owned by player.
 	 */
 	public Color getColor() {
